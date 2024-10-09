@@ -14,9 +14,10 @@ var rootCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		dark, _ := cmd.Flags().GetBool("dark")
 		browser, _ := cmd.Flags().GetBool("browser")
+		openReadme, _ := cmd.Flags().GetBool("readme")
 		port, _ := cmd.Flags().GetInt("port")
 
-		client := pkg.Client{Dark: dark, OpenBrowser: browser, Port: port}
+		client := pkg.Client{Dark: dark, OpenBrowser: browser, Port: port, OpenReadme: openReadme}
 
 		var file string
 		if len(args) == 1 {
@@ -37,5 +38,6 @@ func Execute() {
 func init() {
 	rootCmd.Flags().BoolP("dark", "d", false, "Activate darkmode")
 	rootCmd.Flags().BoolP("browser", "b", true, "Open new browser tab")
+	rootCmd.Flags().BoolP("readme", "r", true, "Open readme if no file provided")
 	rootCmd.Flags().IntP("port", "p", 6419, "Port to use")
 }

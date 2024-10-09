@@ -32,7 +32,10 @@ func (client *Client) Serve(file string) error {
 
 	// Serve website with rendered markdown
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		if regex.MatchString(r.URL.Path) {
+		f, err := dir.Open(r.URL.Path)
+	  defer f.Close()
+
+		if err == nil && regex.MatchString(r.URL.Path) {
 			// Open file and convert to html
 			bytes, err := readToString(dir, r.URL.Path)
 			htmlContent := client.MdToHTML(bytes)
@@ -48,10 +51,19 @@ func (client *Client) Serve(file string) error {
 	})
 
 	addr := fmt.Sprintf("http://localhost:%d", client.Port)
-	if file != "" {
+	if file == "" {
+		// If README.md exists then open README.md at beginning
+		readme := "README.md"
+		f, err := dir.Open(readme)
+	  defer f.Close()
+		if err == nil && client.OpenReadme {
+			addr = path.Join(addr, readme)
+		}
+	} else {
 		addr = path.Join(addr, file)
 	}
-	fmt.Printf("Starting server: %s\n", addr)
+
+	fmt.Printf("🚀 Starting server: %s\n", addr)
 
 	if client.OpenBrowser {
 		err := Open(addr)
