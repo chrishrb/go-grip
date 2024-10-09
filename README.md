@@ -56,6 +56,17 @@ To terminate the current server simply press `CTRL-C`.
 
 <img src="./.github/docs/examples.png" alt="examples" width="1000"/>
 
+## 🐛 Known TODOs / Bugs
+
+* [ ] GitHub alert block
+    ```md
+    > [!NOTE]
+    > Useful information that users should know, even when skimming content.
+    ```
+* [ ] Checkboxes (like in this todo list)
+* [ ] Tests and refactoring
+
+
 ## 📌 Similar tools
 
 This tool is, like the name already says, a reimplementation of [grip](https://github.com/joeyespo/grip) in go and without using the web API of GitHub.

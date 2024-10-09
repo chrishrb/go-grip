@@ -6,7 +6,7 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"path"
+	"net/url"
 	"path/filepath"
 	"regexp"
 	"text/template"
@@ -52,7 +52,7 @@ func (client *Client) Serve(file string) error {
 		}
 	})
 
-	addr := fmt.Sprintf("http://localhost:%d", client.Port)
+	addr := fmt.Sprintf("http://localhost:%d/", client.Port)
 	if file == "" {
 		// If README.md exists then open README.md at beginning
 		readme := "README.md"
@@ -61,10 +61,10 @@ func (client *Client) Serve(file string) error {
 			defer f.Close()
 		}
 		if err == nil && client.OpenReadme {
-			addr = path.Join(addr, readme)
+			addr, _ = url.JoinPath(addr, readme)
 		}
 	} else {
-		addr = path.Join(addr, file)
+		addr, _ = url.JoinPath(addr, file)
 	}
 
 	fmt.Printf("🚀 Starting server: %s\n", addr)
