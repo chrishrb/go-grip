@@ -3,12 +3,15 @@ package pkg
 import (
 	"bytes"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"path"
 	"path/filepath"
 	"regexp"
 	"text/template"
+
+	"github.com/aarol/reload"
 )
 
 type htmlStruct struct {
@@ -17,6 +20,9 @@ type htmlStruct struct {
 }
 
 func (client *Client) Serve(file string) error {
+	reload := reload.New("./")
+	reload.Log = log.New(io.Discard, "", 0)
+
 	dir := http.Dir("./")
 	chttp := http.NewServeMux()
 	chttp.Handle("/", http.FileServer(dir))
@@ -41,12 +47,11 @@ func (client *Client) Serve(file string) error {
 		}
 	})
 
-	addr := fmt.Sprintf("http://localhost:%d/", client.Port)
-	fmt.Printf("Starting server: %s\n", addr)
-
+	addr := fmt.Sprintf("http://localhost:%d", client.Port)
 	if file != "" {
 		addr = path.Join(addr, file)
 	}
+	fmt.Printf("Starting server: %s\n", addr)
 
 	if client.OpenBrowser {
 		err := Open(addr)
@@ -55,7 +60,8 @@ func (client *Client) Serve(file string) error {
 		}
 	}
 
-	err := http.ListenAndServe(fmt.Sprintf(":%d", client.Port), nil)
+	handler := reload.Handle(http.DefaultServeMux)
+	err := http.ListenAndServe(fmt.Sprintf(":%d", client.Port), handler)
 	return err
 }
 

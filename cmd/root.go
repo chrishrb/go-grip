@@ -10,7 +10,7 @@ import (
 var rootCmd = &cobra.Command{
 	Use:   "go-grip [file]",
 	Short: "Render markdown document as html",
-	Args:  cobra.MatchAll(cobra.MinimumNArgs(1), cobra.OnlyValidArgs),
+	Args:  cobra.MatchAll(cobra.OnlyValidArgs),
 	Run: func(cmd *cobra.Command, args []string) {
 		dark, _ := cmd.Flags().GetBool("dark")
 		browser, _ := cmd.Flags().GetBool("browser")
@@ -18,7 +18,11 @@ var rootCmd = &cobra.Command{
 
 		client := pkg.Client{Dark: dark, OpenBrowser: browser, Port: port}
 
-		err := client.Serve(args[0])
+		var file string
+		if len(args) == 1 {
+			file = args[0]
+		}
+		err := client.Serve(file)
 		cobra.CheckErr(err)
 	},
 }
@@ -31,7 +35,7 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.Flags().BoolP("dark", "d", false, "Darkmode")
+	rootCmd.Flags().BoolP("dark", "d", false, "Activate darkmode")
 	rootCmd.Flags().BoolP("browser", "b", true, "Open new browser tab")
 	rootCmd.Flags().IntP("port", "p", 6419, "Port to use")
 }
