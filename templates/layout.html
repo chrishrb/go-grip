@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+	<title>Markdown Preview</title>
+  {{if .Darkmode }}
+  <link rel="stylesheet" href="/static/css/github-markdown-dark.css">
+  {{else}}
+  <link rel="stylesheet" href="/static/css/github-markdown-light.css">
+  {{end}}
+</head>
+<body class="markdown-body entry-content container-lg">
+  <div style="padding: 32px;">
+    <div class="">
+    {{ .Content }}
+    </div>
+  </div>
+</body>
+</html>
