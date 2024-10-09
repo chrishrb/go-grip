@@ -2,7 +2,7 @@ package pkg
 
 import (
 	"io"
-	"os"
+	"log"
 
 	"github.com/alecthomas/chroma/v2/quick"
 	"github.com/gomarkdown/markdown"
@@ -11,12 +11,7 @@ import (
 	"github.com/gomarkdown/markdown/parser"
 )
 
-func (client *Client) MdToHTML(filename string) ([]byte, error) {
-	bytes, err := os.ReadFile(filename)
-	if err != nil {
-		return nil, err
-	}
-
+func (client *Client) MdToHTML(bytes []byte) []byte {
 	extensions := parser.CommonExtensions | parser.AutoHeadingIDs
 	p := parser.NewWithExtensions(extensions)
 	doc := p.Parse(bytes)
@@ -25,7 +20,7 @@ func (client *Client) MdToHTML(filename string) ([]byte, error) {
 	opts := html.RendererOptions{Flags: htmlFlags, RenderNodeHook: client.renderHookCodeBlock}
 	renderer := html.NewRenderer(opts)
 
-	return markdown.Render(doc, renderer), err
+	return markdown.Render(doc, renderer)
 }
 
 func (client *Client) renderHookCodeBlock(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool) {
@@ -42,7 +37,10 @@ func (client *Client) renderHookCodeBlock(w io.Writer, node ast.Node, entering b
 		style = "github"
 	}
 
-	quick.Highlight(w, string(block.Literal), string(block.Info), "html", style)
+	err := quick.Highlight(w, string(block.Literal), string(block.Info), "html", style)
+	if err != nil {
+		log.Println("Error:", err)
+	}
 
 	return ast.GoToNext, true
 }

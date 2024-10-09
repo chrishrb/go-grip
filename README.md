@@ -1,7 +1,7 @@
 <br />
 <div align="center">
   <a href="#">
-    <img src=".github/assets/nix-dots.png" alt="Logo" height="80">
+    <img src=".github/logo-1.png" alt="Logo" height="80">
   </a>
 </div>
 

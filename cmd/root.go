@@ -18,10 +18,7 @@ var rootCmd = &cobra.Command{
 
 		client := pkg.Client{Dark: dark, OpenBrowser: browser, Port: port}
 
-		bytes, err := client.MdToHTML(args[0])
-		cobra.CheckErr(err)
-
-		err = client.Serve(bytes)
+		err := client.Serve(args[0])
 		cobra.CheckErr(err)
 	},
 }
