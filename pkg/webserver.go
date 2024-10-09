@@ -33,7 +33,9 @@ func (client *Client) Serve(file string) error {
 	// Serve website with rendered markdown
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		f, err := dir.Open(r.URL.Path)
-	  defer f.Close()
+    if err == nil {
+	    defer f.Close()
+    }
 
 		if err == nil && regex.MatchString(r.URL.Path) {
 			// Open file and convert to html
@@ -55,7 +57,9 @@ func (client *Client) Serve(file string) error {
 		// If README.md exists then open README.md at beginning
 		readme := "README.md"
 		f, err := dir.Open(readme)
-	  defer f.Close()
+    if err == nil {
+	    defer f.Close()
+    }
 		if err == nil && client.OpenReadme {
 			addr = path.Join(addr, readme)
 		}
