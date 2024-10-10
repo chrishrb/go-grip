@@ -91,11 +91,15 @@ func renderHookBlockquote(w io.Writer, node ast.Node, entering bool) (ast.WalkSt
 	}
 
 	// Set the message type based on the content of the blockquote
+	var err error
 	if entering {
 		s, _ := createBlockquoteStart(alert)
-		io.WriteString(w, s)
+		_, err = io.WriteString(w, s)
 	} else {
-		io.WriteString(w, "</div>")
+		_, err = io.WriteString(w, "</div>")
+	}
+	if err != nil {
+		log.Println("Error:", err)
 	}
 
 	return ast.GoToNext, true
@@ -111,32 +115,40 @@ func renderHookText(w io.Writer, node ast.Node) (ast.WalkStatus, bool) {
 
 	_, ok = paragraph.GetParent().(*ast.BlockQuote)
 	if ok {
-    // Remove prefixes
-    for _, b := range blockquotes {
-      content, found := strings.CutPrefix(string(block.Literal), fmt.Sprintf("[!%s]", strings.ToUpper(b)))
-      if found {
-        io.WriteString(w, content)
-        return ast.GoToNext, true
-      }
-    }
-  }
+		// Remove prefixes
+		for _, b := range blockquotes {
+			content, found := strings.CutPrefix(string(block.Literal), fmt.Sprintf("[!%s]", strings.ToUpper(b)))
+			if found {
+				_, err := io.WriteString(w, content)
+				if err != nil {
+					log.Println("Error:", err)
+				}
+				return ast.GoToNext, true
+			}
+		}
+	}
 
 	_, ok = paragraph.GetParent().(*ast.ListItem)
 	if ok {
-    content, found := strings.CutPrefix(string(block.Literal), "[ ]")
-    content = `<input type="checkbox" disabled class="task-list-item-checkbox"> ` + content
-    if found {
-      io.WriteString(w, content)
-      return ast.GoToNext, true
-    }
+		content, found := strings.CutPrefix(string(block.Literal), "[ ]")
+		content = `<input type="checkbox" disabled class="task-list-item-checkbox"> ` + content
+		if found {
+			_, err := io.WriteString(w, content)
+			if err != nil {
+				log.Println("Error:", err)
+			}
+			return ast.GoToNext, true
+		}
 
-    content, found = strings.CutPrefix(string(block.Literal), "[x]")
-    content = `<input type="checkbox" disabled class="task-list-item-checkbox" checked> ` + content
-    if found {
-      io.WriteString(w, content)
-      return ast.GoToNext, true
-    }
-  }
+		content, found = strings.CutPrefix(string(block.Literal), "[x]")
+		content = `<input type="checkbox" disabled class="task-list-item-checkbox" checked> ` + content
+		if found {
+			_, err := io.WriteString(w, content)
+			if err != nil {
+				log.Println("Error:", err)
+			}
+		}
+	}
 
 	return ast.GoToNext, false
 }
@@ -154,15 +166,21 @@ func renderHookListItem(w io.Writer, node ast.Node, entering bool) (ast.WalkStat
 		return ast.GoToNext, false
 	}
 
-  if !(strings.HasPrefix(string(t.Literal), "[ ]") || strings.HasPrefix(string(t.Literal), "[x]")) {
+	if !(strings.HasPrefix(string(t.Literal), "[ ]") || strings.HasPrefix(string(t.Literal), "[x]")) {
 		return ast.GoToNext, false
-  }
+	}
 
-  if entering {
-		io.WriteString(w, "<li class=\"task-list-item\">")
-  } else {
-		io.WriteString(w, "</li>")
-  }
+	if entering {
+		_, err := io.WriteString(w, "<li class=\"task-list-item\">")
+		if err != nil {
+			log.Println("Error:", err)
+		}
+	} else {
+		_, err := io.WriteString(w, "</li>")
+		if err != nil {
+			log.Println("Error:", err)
+		}
+	}
 
 	return ast.GoToNext, true
 }
