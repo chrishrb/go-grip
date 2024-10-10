@@ -20,6 +20,10 @@ To install go-grip, simply:
 go install github.com/chrishrb/go-grip@latest
 ```
 
+> [!TIP]
+> You can also use nix flakes to install this plugin.
+> More useful information [here](https://nixos.wiki/wiki/Flakes).
+
 ## 🔨 Usage
 
 To render the `README.md` file simply execute:
@@ -58,11 +62,6 @@ To terminate the current server simply press `CTRL-C`.
 
 ## 🐛 Known TODOs / Bugs
 
-* [ ] GitHub alert block
-    ```md
-    > [!NOTE]
-    > Useful information that users should know, even when skimming content.
-    ```
 * [ ] Checkboxes (like in this todo list)
 * [ ] Tests and refactoring
 
