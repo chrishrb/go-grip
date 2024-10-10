@@ -42,7 +42,7 @@ func (client *Client) Serve(file string) error {
 			bytes, err := readToString(dir, r.URL.Path)
 			if err != nil {
 				log.Fatal(err)
-        return
+				return
 			}
 			htmlContent := client.MdToHTML(bytes)
 
@@ -50,7 +50,7 @@ func (client *Client) Serve(file string) error {
 			err = serveTemplate(w, htmlStruct{Content: string(htmlContent), Darkmode: client.Dark})
 			if err != nil {
 				log.Fatal(err)
-        return
+				return
 			}
 		} else {
 			chttp.ServeHTTP(w, r)
