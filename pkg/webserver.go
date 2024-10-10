@@ -40,12 +40,17 @@ func (client *Client) Serve(file string) error {
 		if err == nil && regex.MatchString(r.URL.Path) {
 			// Open file and convert to html
 			bytes, err := readToString(dir, r.URL.Path)
+			if err != nil {
+				log.Fatal(err)
+        return
+			}
 			htmlContent := client.MdToHTML(bytes)
 
 			// Serve
 			err = serveTemplate(w, htmlStruct{Content: string(htmlContent), Darkmode: client.Dark})
 			if err != nil {
 				log.Fatal(err)
+        return
 			}
 		} else {
 			chttp.ServeHTTP(w, r)
