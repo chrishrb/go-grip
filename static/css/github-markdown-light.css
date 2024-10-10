@@ -1,3 +1,25 @@
+/* custom light */
+.container {
+  max-width: 896px;
+  margin: 0 auto;
+}
+
+.container-inner {
+  padding: 32px;
+  border-width: 1px;
+  border-color: #d0d7de;
+  border-style: solid;
+  border-radius: 6px;
+  margin-top: 20px;
+  margin-bottom: 6px;
+}
+
+.footer {
+  padding-top: 10px;
+  padding-bottom: 20px;
+  text-align: center;
+}
+
 /* light */
 .markdown-body {
   color-scheme: light;
