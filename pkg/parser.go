@@ -36,6 +36,8 @@ func (client *Client) renderHook(w io.Writer, node ast.Node, entering bool) (ast
 		return renderHookBlockquote(w, node, entering)
 	case *ast.Text:
 		return renderHookText(w, node)
+	case *ast.ListItem:
+		return renderHookListItem(w, node, entering)
 	case *ast.CodeBlock:
 		return renderHookCodeBlock(w, node, client.Dark)
 	}
@@ -108,20 +110,61 @@ func renderHookText(w io.Writer, node ast.Node) (ast.WalkStatus, bool) {
 	}
 
 	_, ok = paragraph.GetParent().(*ast.BlockQuote)
+	if ok {
+    // Remove prefixes
+    for _, b := range blockquotes {
+      content, found := strings.CutPrefix(string(block.Literal), fmt.Sprintf("[!%s]", strings.ToUpper(b)))
+      if found {
+        io.WriteString(w, content)
+        return ast.GoToNext, true
+      }
+    }
+  }
+
+	_, ok = paragraph.GetParent().(*ast.ListItem)
+	if ok {
+    content, found := strings.CutPrefix(string(block.Literal), "[ ]")
+    content = `<input type="checkbox" disabled class="task-list-item-checkbox"> ` + content
+    if found {
+      io.WriteString(w, content)
+      return ast.GoToNext, true
+    }
+
+    content, found = strings.CutPrefix(string(block.Literal), "[x]")
+    content = `<input type="checkbox" disabled class="task-list-item-checkbox" checked> ` + content
+    if found {
+      io.WriteString(w, content)
+      return ast.GoToNext, true
+    }
+  }
+
+	return ast.GoToNext, false
+}
+
+func renderHookListItem(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool) {
+	block := node.(*ast.ListItem)
+
+	paragraph, ok := (block.GetChildren()[0]).(*ast.Paragraph)
 	if !ok {
 		return ast.GoToNext, false
 	}
 
-	// Remove prefixes
-	for _, b := range blockquotes {
-		content, found := strings.CutPrefix(string(block.Literal), fmt.Sprintf("[!%s]", strings.ToUpper(b)))
-		if found {
-			io.WriteString(w, content)
-			return ast.GoToNext, true
-		}
+	t, ok := (paragraph.GetChildren()[0]).(*ast.Text)
+	if !ok {
+		return ast.GoToNext, false
 	}
 
-	return ast.GoToNext, false
+  if !(strings.HasPrefix(string(t.Literal), "[ ]") || strings.HasPrefix(string(t.Literal), "[x]")) {
+		return ast.GoToNext, false
+  }
+
+  if entering {
+		io.WriteString(w, "<li class=\"task-list-item\">")
+  } else {
+		io.WriteString(w, "</li>")
+  }
+
+	return ast.GoToNext, true
 }
 
 func createBlockquoteStart(alert string) (string, error) {

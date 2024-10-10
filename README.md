@@ -12,6 +12,17 @@
   </p>
 </div>
 
+## ⚡️Features
+
+* ⚡️Written in Go
+* 📄 Render markdown to HTML and view it in your browser
+* 📱 Dark and white mode
+* 🎨 Syntax highlighting for code 
+* [x] Todo list like the one on GitHub
+
+> [!TIP]
+> Support of blockquotes (note, tip, important, warning and caution) [see here](https://github.com/orgs/community/discussions/16925)
+
 ## 🚀 Getting started
 
 To install go-grip, simply:
@@ -58,14 +69,13 @@ To terminate the current server simply press `CTRL-C`.
 
 ## 📝 Examples
 
-<img src="./.github/docs/examples.png" alt="examples" width="1000"/>
+<img src="./.github/docs/example-1.png" alt="examples" width="1000"/>
 
 ## 🐛 Known TODOs / Bugs
 
-* [ ] Checkboxes (like in this todo list)
 * [ ] Tests and refactoring
-
+* [ ] Make it possible to export the generated html
 
 ## 📌 Similar tools
 
-This tool is, like the name already says, a reimplementation of [grip](https://github.com/joeyespo/grip) in go and without using the web API of GitHub.
+This tool is a Go-based reimplementation of the original [grip](https://github.com/joeyespo/grip), offering the same functionality without relying on GitHub's web API.
