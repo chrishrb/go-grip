@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"path/filepath"
 	"regexp"
 	"text/template"
 
@@ -20,10 +21,13 @@ type htmlStruct struct {
 }
 
 func (client *Client) Serve(file string) error {
-	reload := reload.New("./")
+	directory := filepath.Dir(file)
+	filename := filepath.Base(file)
+
+	reload := reload.New(directory)
 	reload.Log = log.New(io.Discard, "", 0)
 
-	dir := http.Dir("./")
+	dir := http.Dir(directory)
 	chttp := http.NewServeMux()
 	chttp.Handle("/static/", http.FileServer(http.FS(defaults.StaticFiles)))
 	chttp.Handle("/", http.FileServer(dir))
@@ -70,7 +74,7 @@ func (client *Client) Serve(file string) error {
 			addr, _ = url.JoinPath(addr, readme)
 		}
 	} else {
-		addr, _ = url.JoinPath(addr, file)
+		addr, _ = url.JoinPath(addr, filename)
 	}
 
 	fmt.Printf("🚀 Starting server: %s\n", addr)
