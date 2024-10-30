@@ -12,6 +12,7 @@ import (
 	"text/template"
 
 	"github.com/aarol/reload"
+	"github.com/chrishrb/go-grip/defaults"
 )
 
 type htmlStruct struct {
@@ -20,11 +21,15 @@ type htmlStruct struct {
 }
 
 func (client *Client) Serve(file string) error {
-	reload := reload.New("./")
+	directory := filepath.Dir(file)
+	filename := filepath.Base(file)
+
+	reload := reload.New(directory)
 	reload.Log = log.New(io.Discard, "", 0)
 
-	dir := http.Dir("./")
+	dir := http.Dir(directory)
 	chttp := http.NewServeMux()
+	chttp.Handle("/static/", http.FileServer(http.FS(defaults.StaticFiles)))
 	chttp.Handle("/", http.FileServer(dir))
 
 	// Regex for markdown
@@ -69,7 +74,7 @@ func (client *Client) Serve(file string) error {
 			addr, _ = url.JoinPath(addr, readme)
 		}
 	} else {
-		addr, _ = url.JoinPath(addr, file)
+		addr, _ = url.JoinPath(addr, filename)
 	}
 
 	fmt.Printf("🚀 Starting server: %s\n", addr)
@@ -103,8 +108,7 @@ func readToString(dir http.Dir, filename string) ([]byte, error) {
 
 func serveTemplate(w http.ResponseWriter, html htmlStruct) error {
 	w.Header().Set("Content-Type", "text/html")
-	lp := filepath.Join("templates", "layout.html")
-	tmpl, err := template.ParseFiles(lp)
+	tmpl, err := template.ParseFS(defaults.Templates, "templates/layout.html")
 	if err != nil {
 		return err
 	}
