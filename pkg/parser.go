@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/alecthomas/chroma/v2/quick"
+	"github.com/chrishrb/go-grip/defaults"
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/gomarkdown/markdown/html"
@@ -187,7 +188,7 @@ func renderHookListItem(w io.Writer, node ast.Node, entering bool) (ast.WalkStat
 
 func createBlockquoteStart(alert string) (string, error) {
 	lp := filepath.Join("templates/alert", fmt.Sprintf("%s.html", alert))
-	tmpl, err := template.ParseFiles(lp)
+	tmpl, err := template.ParseFS(defaults.Templates, lp)
 	if err != nil {
 		return "", err
 	}

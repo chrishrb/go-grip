@@ -1,17 +1,22 @@
 /* custom dark */
-.container {
-  max-width: 896px;
-  margin: 0 auto;
+@media (min-width: 940px) {
+  .container {
+    max-width: 896px;
+    margin: 0 auto;
+  }
+
+  .container-inner {
+    border-width: 1px;
+    border-color: #30363d;
+    border-style: solid;
+    border-radius: 6px;
+    margin-top: 20px;
+    margin-bottom: 6px;
+  }
 }
 
 .container-inner {
   padding: 32px;
-  border-width: 1px;
-  border-color: #30363d;
-  border-style: solid;
-  border-radius: 6px;
-  margin-top: 20px;
-  margin-bottom: 6px;
 }
 
 .footer {

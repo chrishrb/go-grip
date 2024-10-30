@@ -7,11 +7,11 @@ import (
 	"log"
 	"net/http"
 	"net/url"
-	"path/filepath"
 	"regexp"
 	"text/template"
 
 	"github.com/aarol/reload"
+	"github.com/chrishrb/go-grip/defaults"
 )
 
 type htmlStruct struct {
@@ -25,6 +25,7 @@ func (client *Client) Serve(file string) error {
 
 	dir := http.Dir("./")
 	chttp := http.NewServeMux()
+	chttp.Handle("/static/", http.FileServer(http.FS(defaults.StaticFiles)))
 	chttp.Handle("/", http.FileServer(dir))
 
 	// Regex for markdown
@@ -103,8 +104,7 @@ func readToString(dir http.Dir, filename string) ([]byte, error) {
 
 func serveTemplate(w http.ResponseWriter, html htmlStruct) error {
 	w.Header().Set("Content-Type", "text/html")
-	lp := filepath.Join("templates", "layout.html")
-	tmpl, err := template.ParseFiles(lp)
+	tmpl, err := template.ParseFS(defaults.Templates, "templates/layout.html")
 	if err != nil {
 		return err
 	}
