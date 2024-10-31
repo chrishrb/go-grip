@@ -19,9 +19,19 @@
 * 📱 Dark and white mode
 * 🎨 Syntax highlighting for code 
 * [x] Todo list like the one on GitHub
+* Support for mermaid diagrams
+
+```mermaid
+graph TD;
+      A-->B;
+      A-->C;
+      B-->D;
+      C-->D;
+```
 
 > [!TIP]
 > Support of blockquotes (note, tip, important, warning and caution) [see here](https://github.com/orgs/community/discussions/16925)
+
 
 ## 🚀 Getting started
 

@@ -5,6 +5,9 @@ LDFLAGS="-s -w ${LDFLAGS_OPT}"
 
 all: build format lint ## Format, lint and build
 
+run: ## Run
+	go run main.go
+
 build: ## Build
 	go build -o bin/go-grip main.go
 

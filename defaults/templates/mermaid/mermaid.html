@@ -1,0 +1,16 @@
+<div>
+  <div class="mermaid">
+    {{ .Content }}
+  </div>
+
+  <script src="/static/js/mermaid.min.js"></script>
+  {{if .Darkmode }}
+  <script>
+    mermaid.initialize({startOnLoad:true, theme: 'dark'});
+  </script>
+  {{else}}
+  <script>
+    mermaid.initialize({startOnLoad:true, theme: 'default'});
+  </script>
+  {{end}}
+</div>
