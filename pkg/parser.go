@@ -57,6 +57,15 @@ func renderHookCodeBlock(w io.Writer, node ast.Node, dark bool) (ast.WalkStatus,
 		style = "github"
 	}
 
+	if string(block.Info) == "mermaid" {
+		m, err := renderMermaid(string(block.Literal), dark)
+		if err != nil {
+			log.Println("Error:", err)
+		}
+		fmt.Fprint(w, m)
+		return ast.GoToNext, true
+	}
+
 	err := quick.Highlight(w, string(block.Literal), string(block.Info), "html", style)
 	if err != nil {
 		log.Println("Error:", err)
@@ -194,6 +203,28 @@ func createBlockquoteStart(alert string) (string, error) {
 	}
 	var tpl bytes.Buffer
 	if err := tmpl.Execute(&tpl, alert); err != nil {
+		return "", err
+	}
+	return tpl.String(), nil
+}
+
+type Mermaid struct {
+	Content  string
+	Darkmode bool
+}
+
+func renderMermaid(content string, darkmode bool) (string, error) {
+	m := Mermaid{
+		Content:  content,
+		Darkmode: darkmode,
+	}
+	lp := filepath.Join("templates/mermaid/mermaid.html")
+	tmpl, err := template.ParseFS(defaults.Templates, lp)
+	if err != nil {
+		return "", err
+	}
+	var tpl bytes.Buffer
+	if err := tmpl.Execute(&tpl, m); err != nil {
 		return "", err
 	}
 	return tpl.String(), nil
