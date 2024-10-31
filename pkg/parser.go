@@ -208,13 +208,13 @@ func createBlockquoteStart(alert string) (string, error) {
 	return tpl.String(), nil
 }
 
-type Mermaid struct {
+type mermaid struct {
 	Content  string
 	Darkmode bool
 }
 
 func renderMermaid(content string, darkmode bool) (string, error) {
-	m := Mermaid{
+	m := mermaid{
 		Content:  content,
 		Darkmode: darkmode,
 	}
