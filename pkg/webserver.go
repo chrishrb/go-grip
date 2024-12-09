@@ -62,7 +62,7 @@ func (client *Client) Serve(file string) error {
 		}
 	})
 
-	addr := fmt.Sprintf("http://localhost:%d/", client.Port)
+	addr := fmt.Sprintf("http://%s:%d/", client.Host, client.Port)
 	if file == "" {
 		// If README.md exists then open README.md at beginning
 		readme := "README.md"
