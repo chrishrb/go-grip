@@ -25,7 +25,6 @@ jobs:
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.PAT }}
-          commit-message: Update dependencies
           branch: emojiscraper-updates
           commit-message: Update from weekly emojiscraper run
           title: "Weekly Emojiscraper Update"
