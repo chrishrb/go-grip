@@ -6,7 +6,7 @@ on:
     - cron: '0 0 * * 0' # Runs every Sunday at midnight UTC
 
 jobs:
-  build:
+  run-emojiscraper:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,6 +20,9 @@ jobs:
 
       - name: Run emojiscraper
         run: make emojiscraper
+
+      - name: Format code
+        run: make format
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
