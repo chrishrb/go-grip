@@ -11,7 +11,7 @@
         go-grip = pkgs.buildGoModule {
           name = "go-grip";
           src = self;
-          vendorHash = "sha256-KNKlWm/UaweRlnXD7a0C446IecjLOSwnzKvSoJfcOdE=";
+          vendorHash = "sha256-tfvhMbe0uSWIfaUUawEYe+7ckBttwM1IokKAWBLi8ig=";
         };
       in
       {

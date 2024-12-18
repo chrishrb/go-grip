@@ -14,11 +14,12 @@
 
 ## ⚡️Features
 
-* ⚡️Written in Go
+* ⚡️Written in Go :+1:
 * 📄 Render markdown to HTML and view it in your browser
 * 📱 Dark and white mode
 * 🎨 Syntax highlighting for code 
 * [x] Todo list like the one on GitHub
+* Support for github markdown emojis :+1: :bowtie:
 * Support for mermaid diagrams
 
 ```mermaid

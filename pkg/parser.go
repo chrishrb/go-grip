@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"github.com/alecthomas/chroma/v2/quick"
@@ -118,16 +119,34 @@ func renderHookBlockquote(w io.Writer, node ast.Node, entering bool) (ast.WalkSt
 func renderHookText(w io.Writer, node ast.Node) (ast.WalkStatus, bool) {
 	block := node.(*ast.Text)
 
+	r := regexp.MustCompile(`(:\S+:)`)
+	withEmoji := r.ReplaceAllStringFunc(string(block.Literal), func(s string) string {
+		val, ok := EmojiMap[s]
+		if !ok {
+			return s
+		}
+
+		if strings.HasPrefix(val, "/") {
+			return fmt.Sprintf(`<img class="emoji" title="%s" alt="%s" src="%s" height="20" width="20" align="absmiddle">`, s, s, val)
+		}
+
+		return val
+	})
+
 	paragraph, ok := block.GetParent().(*ast.Paragraph)
 	if !ok {
-		return ast.GoToNext, false
+		_, err := io.WriteString(w, withEmoji)
+		if err != nil {
+			log.Println("Error:", err)
+		}
+		return ast.GoToNext, true
 	}
 
 	_, ok = paragraph.GetParent().(*ast.BlockQuote)
 	if ok {
 		// Remove prefixes
 		for _, b := range blockquotes {
-			content, found := strings.CutPrefix(string(block.Literal), fmt.Sprintf("[!%s]", strings.ToUpper(b)))
+			content, found := strings.CutPrefix(withEmoji, fmt.Sprintf("[!%s]", strings.ToUpper(b)))
 			if found {
 				_, err := io.WriteString(w, content)
 				if err != nil {
@@ -140,7 +159,7 @@ func renderHookText(w io.Writer, node ast.Node) (ast.WalkStatus, bool) {
 
 	_, ok = paragraph.GetParent().(*ast.ListItem)
 	if ok {
-		content, found := strings.CutPrefix(string(block.Literal), "[ ]")
+		content, found := strings.CutPrefix(withEmoji, "[ ]")
 		content = `<input type="checkbox" disabled class="task-list-item-checkbox"> ` + content
 		if found {
 			_, err := io.WriteString(w, content)
@@ -150,7 +169,7 @@ func renderHookText(w io.Writer, node ast.Node) (ast.WalkStatus, bool) {
 			return ast.GoToNext, true
 		}
 
-		content, found = strings.CutPrefix(string(block.Literal), "[x]")
+		content, found = strings.CutPrefix(withEmoji, "[x]")
 		content = `<input type="checkbox" disabled class="task-list-item-checkbox" checked> ` + content
 		if found {
 			_, err := io.WriteString(w, content)
@@ -160,7 +179,11 @@ func renderHookText(w io.Writer, node ast.Node) (ast.WalkStatus, bool) {
 		}
 	}
 
-	return ast.GoToNext, false
+	_, err := io.WriteString(w, withEmoji)
+	if err != nil {
+		log.Println("Error:", err)
+	}
+	return ast.GoToNext, true
 }
 
 func renderHookListItem(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool) {
