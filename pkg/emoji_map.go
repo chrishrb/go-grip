@@ -3,6 +3,7 @@
 package pkg
 
 var EmojiMap = map[string]string{
+	":+1:":                              "👍",
 	":-1:":                              "👎",
 	":100:":                             "💯",
 	":1234:":                            "🔢",
