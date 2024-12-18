@@ -1,15 +1,26 @@
 .PHONY: all format lint clean
 
+# If the first argument is "run"...
+ifeq (run,$(firstword $(MAKECMDGOALS)))
+  # use the rest as arguments for "run"
+  RUN_ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
+  # ...and turn them into do-nothing targets
+  $(eval $(RUN_ARGS):;@:)
+endif
+
 GOCMD=go
 LDFLAGS="-s -w ${LDFLAGS_OPT}"
 
 all: build format lint ## Format, lint and build
 
 run: ## Run
-	go run main.go
+	go run -tags debug main.go $(RUN_ARGS)
+
+emojiscraper: ## Run emojiscraper
+	go run -tags debug main.go emojiscraper defaults/static/emojis pkg/emoji_map.go
 
 build: ## Build
-	go build -o bin/go-grip main.go
+	go build -tags debug -o bin/go-grip main.go
 
 test: ## Test
 	${GOCMD} test ./...

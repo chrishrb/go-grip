@@ -14,7 +14,7 @@
 
 ## ⚡️Features
 
-* ⚡️Written in Go
+* ⚡️Written in Go :+1: :steam_locomotive:
 * 📄 Render markdown to HTML and view it in your browser
 * 📱 Dark and white mode
 * 🎨 Syntax highlighting for code 
