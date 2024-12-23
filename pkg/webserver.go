@@ -16,8 +16,9 @@ import (
 )
 
 type htmlStruct struct {
-	Content  string
-	Darkmode bool
+	Content     string
+	Darkmode    bool
+	BoundingBox bool
 }
 
 func (client *Client) Serve(file string) error {
@@ -52,7 +53,7 @@ func (client *Client) Serve(file string) error {
 			htmlContent := client.MdToHTML(bytes)
 
 			// Serve
-			err = serveTemplate(w, htmlStruct{Content: string(htmlContent), Darkmode: client.Dark})
+			err = serveTemplate(w, htmlStruct{Content: string(htmlContent), Darkmode: client.Dark, BoundingBox: client.BoundingBox})
 			if err != nil {
 				log.Fatal(err)
 				return
