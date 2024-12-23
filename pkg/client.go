@@ -6,5 +6,5 @@ type Client struct {
 	Host        string
 	Port        int
 	OpenReadme  bool
-  BoundingBox bool
+	BoundingBox bool
 }
