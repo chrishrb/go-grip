@@ -5,7 +5,7 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"path/filepath"
+	"path"
 	"strings"
 	"text/template"
 
@@ -93,10 +93,10 @@ func downloadIcon(baseDir, url string) (string, error) {
 
 	parts := strings.Split(url, "/")
 	fileName := parts[len(parts)-1]
-	destPath := filepath.Join(baseDir, fileName)
-	htmlPath := filepath.Join("/static/emojis", fileName)
+	destPath := path.Join(baseDir, fileName)
+	htmlPath := path.Join("/static/emojis", fileName)
 
-	if err := os.MkdirAll(filepath.Dir(destPath), os.ModePerm); err != nil {
+	if err := os.MkdirAll(path.Dir(destPath), os.ModePerm); err != nil {
 		return "", fmt.Errorf("failed to create directories: %v", err)
 	}
 

@@ -6,7 +6,7 @@ import (
 	"html/template"
 	"io"
 	"log"
-	"path/filepath"
+	"path"
 	"regexp"
 	"strings"
 
@@ -219,7 +219,7 @@ func renderHookListItem(w io.Writer, node ast.Node, entering bool) (ast.WalkStat
 }
 
 func createBlockquoteStart(alert string) (string, error) {
-	lp := filepath.Join("templates/alert", fmt.Sprintf("%s.html", alert))
+	lp := path.Join("templates/alert", fmt.Sprintf("%s.html", alert))
 	tmpl, err := template.ParseFS(defaults.Templates, lp)
 	if err != nil {
 		return "", err
@@ -241,7 +241,7 @@ func renderMermaid(content string, darkmode bool) (string, error) {
 		Content:  content,
 		Darkmode: darkmode,
 	}
-	lp := filepath.Join("templates/mermaid/mermaid.html")
+	lp := path.Join("templates/mermaid/mermaid.html")
 	tmpl, err := template.ParseFS(defaults.Templates, lp)
 	if err != nil {
 		return "", err

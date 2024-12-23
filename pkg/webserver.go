@@ -7,7 +7,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
-	"path/filepath"
+	"path"
 	"regexp"
 	"text/template"
 
@@ -21,8 +21,8 @@ type htmlStruct struct {
 }
 
 func (client *Client) Serve(file string) error {
-	directory := filepath.Dir(file)
-	filename := filepath.Base(file)
+	directory := path.Dir(file)
+	filename := path.Base(file)
 
 	reload := reload.New(directory)
 	reload.Log = log.New(io.Discard, "", 0)
