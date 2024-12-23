@@ -17,16 +17,16 @@ var rootCmd = &cobra.Command{
 		openReadme, _ := cmd.Flags().GetBool("readme")
 		host, _ := cmd.Flags().GetString("host")
 		port, _ := cmd.Flags().GetInt("port")
-    boundingBox, _ := cmd.Flags().GetBool("bounding-box")
+		boundingBox, _ := cmd.Flags().GetBool("bounding-box")
 
-    client := pkg.Client{
-      Dark: dark,
-      OpenBrowser: browser,
-      Host: host,
-      Port: port,
-      OpenReadme: openReadme,
-      BoundingBox: boundingBox,
-    }
+		client := pkg.Client{
+			Dark:        dark,
+			OpenBrowser: browser,
+			Host:        host,
+			Port:        port,
+			OpenReadme:  openReadme,
+			BoundingBox: boundingBox,
+		}
 
 		var file string
 		if len(args) == 1 {
