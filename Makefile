@@ -31,8 +31,8 @@ compile: ## Compile for every OS and Platform
 	GOOS=darwin GOARCH=arm64 go build -o bin/go-grip-darwin-arm64 main.go
 	GOOS=linux GOARCH=amd64 go build -o bin/go-grip-linux-amd64 main.go
 	GOOS=linux GOARCH=arm64 go build -o bin/go-grip-linux-arm64 main.go
-	GOOS=windows GOARCH=amd64 go build -o bin/go-grip-windows-amd64 main.go
-	GOOS=windows GOARCH=arm64 go build -o bin/go-grip-windows-arm64 main.go
+	GOOS=windows GOARCH=amd64 go build -o bin/go-grip-windows-amd64.exe main.go
+	GOOS=windows GOARCH=arm64 go build -o bin/go-grip-windows-arm64.exe main.go
 
 format: ## Format code
 	${GOCMD} fmt ./...
