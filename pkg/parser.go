@@ -231,14 +231,14 @@ func createBlockquoteStart(alert string) (string, error) {
 }
 
 type mermaid struct {
-	Content  string
-	Theme    string
+	Content string
+	Theme   string
 }
 
 func renderMermaid(content string, theme string) (string, error) {
 	m := mermaid{
-		Content:  content,
-		Theme: theme,
+		Content: content,
+		Theme:   theme,
 	}
 	lp := path.Join("templates/mermaid/mermaid.html")
 	tmpl, err := template.ParseFS(defaults.Templates, lp)
