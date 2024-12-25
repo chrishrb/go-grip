@@ -41,25 +41,24 @@ func (client *Client) renderHook(w io.Writer, node ast.Node, entering bool) (ast
 	case *ast.ListItem:
 		return renderHookListItem(w, node, entering)
 	case *ast.CodeBlock:
-		return renderHookCodeBlock(w, node, client.Dark)
+		return renderHookCodeBlock(w, node, client.Theme)
 	}
 
 	return ast.GoToNext, false
 }
 
-func renderHookCodeBlock(w io.Writer, node ast.Node, dark bool) (ast.WalkStatus, bool) {
+func renderHookCodeBlock(w io.Writer, node ast.Node, theme string) (ast.WalkStatus, bool) {
 	block := node.(*ast.CodeBlock)
 
 	var style string
-	switch dark {
-	case true:
+	if theme == "dark" {
 		style = "github-dark"
-	default:
+	} else {
 		style = "github"
 	}
 
 	if string(block.Info) == "mermaid" {
-		m, err := renderMermaid(string(block.Literal), dark)
+		m, err := renderMermaid(string(block.Literal), theme)
 		if err != nil {
 			log.Println("Error:", err)
 		}
@@ -233,13 +232,13 @@ func createBlockquoteStart(alert string) (string, error) {
 
 type mermaid struct {
 	Content  string
-	Darkmode bool
+	Theme    string
 }
 
-func renderMermaid(content string, darkmode bool) (string, error) {
+func renderMermaid(content string, theme string) (string, error) {
 	m := mermaid{
 		Content:  content,
-		Darkmode: darkmode,
+		Theme: theme,
 	}
 	lp := path.Join("templates/mermaid/mermaid.html")
 	tmpl, err := template.ParseFS(defaults.Templates, lp)
