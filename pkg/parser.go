@@ -23,7 +23,7 @@ var blockquotes = []string{"Note", "Tip", "Important", "Warning", "Caution"}
 func (client *Client) MdToHTML(bytes []byte) []byte {
 	extensions := parser.NoIntraEmphasis | parser.Tables | parser.FencedCode |
 		parser.Autolink | parser.Strikethrough | parser.SpaceHeadings | parser.HeadingIDs |
-		parser.BackslashLineBreak | parser.MathJax | parser.HardLineBreak
+		parser.BackslashLineBreak | parser.MathJax | parser.HardLineBreak | parser.OrderedListStart
 	p := parser.NewWithExtensions(extensions)
 	doc := p.Parse(bytes)
 
