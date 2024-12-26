@@ -4,10 +4,12 @@
   <meta charset="utf-8">
 	<title>go-grip - markdown preview</title>
   <link rel="icon" type="image/x-icon" href="/static/images/favicon.ico">
-  {{if .Darkmode }}
+  {{if eq .Theme "dark" }}
   <link rel="stylesheet" href="/static/css/github-markdown-dark.css">
-  {{else}}
+  {{else if eq .Theme "light" }}
   <link rel="stylesheet" href="/static/css/github-markdown-light.css">
+  {{else}}
+  <link rel="stylesheet" href="/static/css/github-markdown-auto.css">
   {{end}}
   <link rel="stylesheet" href="/static/css/github-print.css" media="print">
 </head>

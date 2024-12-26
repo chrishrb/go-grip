@@ -1,7 +1,7 @@
 package pkg
 
 type Client struct {
-	Dark        bool
+	Theme       string
 	OpenBrowser bool
 	Host        string
 	Port        int

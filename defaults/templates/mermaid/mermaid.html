@@ -4,13 +4,21 @@
   </div>
 
   <script src="/static/js/mermaid.min.js"></script>
-  {{if .Darkmode }}
+  {{if eq .Theme "dark" }}
   <script>
     mermaid.initialize({startOnLoad:true, theme: 'dark'});
   </script>
-  {{else}}
+  {{else if eq .Theme "light" }}
   <script>
     mermaid.initialize({startOnLoad:true, theme: 'default'});
+  </script>
+  {{else}}
+  <script>
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      mermaid.initialize({startOnLoad:true, theme: 'dark'});
+    } else {
+      mermaid.initialize({startOnLoad:true, theme: 'default'});
+    }
   </script>
   {{end}}
 </div>

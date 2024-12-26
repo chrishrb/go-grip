@@ -17,7 +17,7 @@ import (
 
 type htmlStruct struct {
 	Content     string
-	Darkmode    bool
+	Theme       string
 	BoundingBox bool
 }
 
@@ -27,6 +27,13 @@ func (client *Client) Serve(file string) error {
 
 	reload := reload.New(directory)
 	reload.Log = log.New(io.Discard, "", 0)
+
+	validThemes := map[string]bool{"light": true, "dark": true, "auto": true}
+
+	if !validThemes[client.Theme] {
+		log.Println("Warning: Unknown theme ", client.Theme, ", defaulting to 'auto'")
+		client.Theme = "auto"
+	}
 
 	dir := http.Dir(directory)
 	chttp := http.NewServeMux()
@@ -53,7 +60,7 @@ func (client *Client) Serve(file string) error {
 			htmlContent := client.MdToHTML(bytes)
 
 			// Serve
-			err = serveTemplate(w, htmlStruct{Content: string(htmlContent), Darkmode: client.Dark, BoundingBox: client.BoundingBox})
+			err = serveTemplate(w, htmlStruct{Content: string(htmlContent), Theme: client.Theme, BoundingBox: client.BoundingBox})
 			if err != nil {
 				log.Fatal(err)
 				return
