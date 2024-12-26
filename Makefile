@@ -1,4 +1,4 @@
-.PHONY: all format lint clean
+.PHONY: all run format emojiscraper build vendor test compile format lint clean
 
 # If the first argument is "run"...
 ifeq (run,$(firstword $(MAKECMDGOALS)))
@@ -11,7 +11,7 @@ endif
 GOCMD=go
 LDFLAGS="-s -w ${LDFLAGS_OPT}"
 
-all: build format lint ## Format, lint and build
+all: vendor build format lint ## Format, lint and build
 
 run: ## Run
 	go run -tags debug main.go $(RUN_ARGS)
@@ -21,6 +21,9 @@ emojiscraper: ## Run emojiscraper
 
 build: ## Build
 	go build -tags debug -o bin/go-grip main.go
+
+vendor: ## Vendor
+	go mod vendor
 
 test: ## Test
 	${GOCMD} test ./...
