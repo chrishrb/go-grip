@@ -12,11 +12,17 @@
   </p>
 </div>
 
-## ⚡️Features
+## :question: About
 
-* ⚡️Written in Go :+1:
+**go-grip** is a lightweight, Go-based tool designed to render Markdown files locally, replicating GitHub's style. It offers features like syntax highlighting, dark mode, and support for mermaid diagrams, providing a seamless and visually consistent way to preview Markdown files in your browser.
+
+This project is a reimplementation of the original Python-based [grip](https://github.com/joeyespo/grip), which uses GitHub's web API for rendering. By eliminating the reliance on external APIs, go-grip delivers similar functionality while being fully self-contained, faster, and more secure - perfect for offline use or privacy-conscious users.
+
+## :zap: Features
+
+* :zap: Written in Go :+1:
 * 📄 Render markdown to HTML and view it in your browser
-* 📱 Dark and white mode
+* 📱 Dark and light theme
 * 🎨 Syntax highlighting for code 
 * [x] Todo list like the one on GitHub
 * Support for github markdown emojis :+1: :bowtie:
@@ -34,7 +40,7 @@ graph TD;
 > Support of blockquotes (note, tip, important, warning and caution) [see here](https://github.com/orgs/community/discussions/16925)
 
 
-## 🚀 Getting started
+## :rocket: Getting started
 
 To install go-grip, simply:
 
@@ -46,7 +52,7 @@ go install github.com/chrishrb/go-grip@latest
 > You can also use nix flakes to install this plugin.
 > More useful information [here](https://nixos.wiki/wiki/Flakes).
 
-## 🔨 Usage
+## :hammer: Usage
 
 To render the `README.md` file simply execute:
 
@@ -78,15 +84,15 @@ go-grip -d .
 
 To terminate the current server simply press `CTRL-C`.
 
-## 📝 Examples
+## :pencil: Examples
 
 <img src="./.github/docs/example-1.png" alt="examples" width="1000"/>
 
-## 🐛 Known TODOs / Bugs
+## :bug: Known TODOs / Bugs
 
 * [ ] Tests and refactoring
 * [ ] Make it possible to export the generated html
 
-## 📌 Similar tools
+## :pushpin: Similar tools
 
 This tool is a Go-based reimplementation of the original [grip](https://github.com/joeyespo/grip), offering the same functionality without relying on GitHub's web API.
