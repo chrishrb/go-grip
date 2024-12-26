@@ -15,7 +15,6 @@ var rootCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		theme, _ := cmd.Flags().GetString("theme")
 		browser, _ := cmd.Flags().GetBool("browser")
-		openReadme, _ := cmd.Flags().GetBool("readme")
 		host, _ := cmd.Flags().GetString("host")
 		port, _ := cmd.Flags().GetInt("port")
 		boundingBox, _ := cmd.Flags().GetBool("bounding-box")
@@ -25,7 +24,6 @@ var rootCmd = &cobra.Command{
 			OpenBrowser: browser,
 			Host:        host,
 			Port:        port,
-			OpenReadme:  openReadme,
 			BoundingBox: boundingBox,
 		}
 
@@ -48,8 +46,7 @@ func Execute() {
 func init() {
 	rootCmd.Flags().String("theme", "auto", "Select css theme [light/dark/auto]")
 	rootCmd.Flags().BoolP("browser", "b", true, "Open new browser tab")
-	rootCmd.Flags().BoolP("readme", "r", true, "Open readme if no file provided")
 	rootCmd.Flags().StringP("host", "H", "localhost", "Host to use")
 	rootCmd.Flags().IntP("port", "p", 6419, "Port to use")
-	rootCmd.Flags().BoolP("bounding-box", "B", true, "Add bounding box to HTML")
+	rootCmd.Flags().Bool("bounding-box", true, "Add bounding box to HTML")
 }

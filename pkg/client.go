@@ -5,6 +5,5 @@ type Client struct {
 	OpenBrowser bool
 	Host        string
 	Port        int
-	OpenReadme  bool
 	BoundingBox bool
 }

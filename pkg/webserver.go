@@ -78,7 +78,7 @@ func (client *Client) Serve(file string) error {
 		if err == nil {
 			defer f.Close()
 		}
-		if err == nil && client.OpenReadme {
+		if err == nil {
 			addr, _ = url.JoinPath(addr, readme)
 		}
 	} else {
