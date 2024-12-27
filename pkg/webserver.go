@@ -26,7 +26,7 @@ func (client *Client) Serve(file string) error {
 	filename := path.Base(file)
 
 	reload := reload.New(directory)
-	reload.Log = log.New(io.Discard, "", 0)
+	reload.DebugLog = log.New(io.Discard, "", 0)
 
 	validThemes := map[string]bool{"light": true, "dark": true, "auto": true}
 
