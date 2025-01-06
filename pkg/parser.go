@@ -10,7 +10,9 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/alecthomas/chroma/v2/quick"
+	chroma_html "github.com/alecthomas/chroma/v2/formatters/html"
+	"github.com/alecthomas/chroma/v2/lexers"
+	"github.com/alecthomas/chroma/v2/styles"
 	"github.com/chrishrb/go-grip/defaults"
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/ast"
@@ -52,13 +54,6 @@ func (client *Client) renderHook(w io.Writer, node ast.Node, entering bool) (ast
 func renderHookCodeBlock(w io.Writer, node ast.Node, theme string) (ast.WalkStatus, bool) {
 	block := node.(*ast.CodeBlock)
 
-	var style string
-	if theme == "dark" {
-		style = "github-dark"
-	} else {
-		style = "github"
-	}
-
 	if string(block.Info) == "mermaid" {
 		m, err := renderMermaid(string(block.Literal), theme)
 		if err != nil {
@@ -68,7 +63,10 @@ func renderHookCodeBlock(w io.Writer, node ast.Node, theme string) (ast.WalkStat
 		return ast.GoToNext, true
 	}
 
-	err := quick.Highlight(w, string(block.Literal), string(block.Info), "html", style)
+	lexer := lexers.Get(string(block.Info))
+	iterator, _ := lexer.Tokenise(nil, string(block.Literal))
+	formatter := chroma_html.New(chroma_html.WithClasses(true))
+	err := formatter.Format(w, styles.Fallback, iterator)
 	if err != nil {
 		log.Println("Error:", err)
 	}
