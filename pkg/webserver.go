@@ -9,16 +9,21 @@ import (
 	"net/url"
 	"path"
 	"regexp"
+	"strings"
 	"text/template"
 
 	"github.com/aarol/reload"
+	chroma_html "github.com/alecthomas/chroma/v2/formatters/html"
+	"github.com/alecthomas/chroma/v2/styles"
 	"github.com/chrishrb/go-grip/defaults"
 )
 
 type htmlStruct struct {
-	Content     string
-	Theme       string
-	BoundingBox bool
+	Content      string
+	Theme        string
+	BoundingBox  bool
+	CssCodeLight string
+	CssCodeDark  string
 }
 
 func (client *Client) Serve(file string) error {
@@ -60,7 +65,13 @@ func (client *Client) Serve(file string) error {
 			htmlContent := client.MdToHTML(bytes)
 
 			// Serve
-			err = serveTemplate(w, htmlStruct{Content: string(htmlContent), Theme: client.Theme, BoundingBox: client.BoundingBox})
+			err = serveTemplate(w, htmlStruct{
+				Content:      string(htmlContent),
+				Theme:        client.Theme,
+				BoundingBox:  client.BoundingBox,
+				CssCodeLight: getCssCode("github"),
+				CssCodeDark:  getCssCode("github-dark"),
+			})
 			if err != nil {
 				log.Fatal(err)
 				return
@@ -122,4 +133,12 @@ func serveTemplate(w http.ResponseWriter, html htmlStruct) error {
 	}
 	err = tmpl.Execute(w, html)
 	return err
+}
+
+func getCssCode(style string) string {
+	buf := new(strings.Builder)
+	formatter := chroma_html.New(chroma_html.WithClasses(true))
+	s := styles.Get(style)
+	_ = formatter.WriteCSS(buf, s)
+	return buf.String()
 }

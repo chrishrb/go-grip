@@ -6,14 +6,18 @@
     <link rel="icon" type="image/x-icon" href="/static/images/favicon.ico" />
     {{if eq .Theme "dark" }}
     <link rel="stylesheet" href="/static/css/github-markdown-dark.css" />
+    <style>{{ .CssCodeDark }}</style>
     {{else if eq .Theme "light" }}
     <link rel="stylesheet" href="/static/css/github-markdown-light.css" />
+    <style>{{ .CssCodeLight }}</style>
     {{else}}
     <link
       rel="stylesheet"
       href="/static/css/github-markdown-light.css"
       media="(prefers-color-scheme: light)"
     />
+    <style media="(prefers-color-scheme: light)">{{ .CssCodeLight }}</style>
+    <style media="(prefers-color-scheme: dark)">{{ .CssCodeDark }}</style>
     <link
       rel="stylesheet"
       href="/static/css/github-markdown-dark.css"
