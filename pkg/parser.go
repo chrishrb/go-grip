@@ -10,6 +10,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/alecthomas/chroma/v2"
 	chroma_html "github.com/alecthomas/chroma/v2/formatters/html"
 	"github.com/alecthomas/chroma/v2/lexers"
 	"github.com/alecthomas/chroma/v2/styles"
@@ -63,7 +64,15 @@ func renderHookCodeBlock(w io.Writer, node ast.Node, theme string) (ast.WalkStat
 		return ast.GoToNext, true
 	}
 
-	lexer := lexers.Get(string(block.Info))
+	var lexer chroma.Lexer
+	if block.Info == nil {
+		lexer = lexers.Analyse(string(block.Literal))
+		if lexer == nil {
+			lexer = lexers.Get("plaintext")
+		}
+	} else {
+		lexer = lexers.Get(string(block.Info))
+	}
 	iterator, _ := lexer.Tokenise(nil, string(block.Literal))
 	formatter := chroma_html.New(chroma_html.WithClasses(true))
 	err := formatter.Format(w, styles.Fallback, iterator)
