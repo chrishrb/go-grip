@@ -20,13 +20,13 @@ This project is a reimplementation of the original Python-based [grip](https://g
 
 ## :zap: Features
 
-* :zap: Written in Go :+1:
-* 📄 Render markdown to HTML and view it in your browser
-* 📱 Dark and light theme
-* 🎨 Syntax highlighting for code 
-* [x] Todo list like the one on GitHub
-* Support for github markdown emojis :+1: :bowtie:
-* Support for mermaid diagrams
+- :zap: Written in Go :+1:
+- 📄 Render markdown to HTML and view it in your browser
+- 📱 Dark and light theme
+- 🎨 Syntax highlighting for code
+- [x] Todo list like the one on GitHub
+- Support for github markdown emojis :+1: :bowtie:
+- Support for mermaid diagrams
 
 ```mermaid
 graph TD;
@@ -38,7 +38,6 @@ graph TD;
 
 > [!TIP]
 > Support of blockquotes (note, tip, important, warning and caution) [see here](https://github.com/orgs/community/discussions/16925)
-
 
 ## :rocket: Getting started
 
@@ -90,8 +89,8 @@ To terminate the current server simply press `CTRL-C`.
 
 ## :bug: Known TODOs / Bugs
 
-* [ ] Tests and refactoring
-* [ ] Make it possible to export the generated html
+- [ ] Tests and refactoring
+- [ ] Make it possible to export the generated html
 
 ## :pushpin: Similar tools
 
