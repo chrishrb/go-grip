@@ -13,7 +13,7 @@
           src = self;
           # Only for updating vendorHas
           # vendorHash = "sha256-RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR=";
-          vendorHash = "sha256-WztjGqAVSJvH30a35P9r7sMlBWTjXLPIbf/7mPID5Ds=";
+          vendorHash = "sha256-aU6vo/uqJzctD7Q8HPFzHXVVJwMmlzQXhAA6LSkRAow=";
         };
       in
       {
