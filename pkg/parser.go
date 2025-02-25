@@ -67,12 +67,14 @@ func renderHookCodeBlock(w io.Writer, node ast.Node, theme string) (ast.WalkStat
 	var lexer chroma.Lexer
 	if block.Info == nil {
 		lexer = lexers.Analyse(string(block.Literal))
-		if lexer == nil {
-			lexer = lexers.Get("plaintext")
-		}
 	} else {
 		lexer = lexers.Get(string(block.Info))
 	}
+	// ensure lexer is never nil
+	if lexer == nil {
+		lexer = lexers.Get("plaintext")
+	}
+
 	iterator, _ := lexer.Tokenise(nil, string(block.Literal))
 	formatter := chroma_html.New(chroma_html.WithClasses(true))
 	err := formatter.Format(w, styles.Fallback, iterator)
