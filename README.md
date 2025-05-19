@@ -39,6 +39,10 @@ graph TD;
 > [!TIP]
 > Support of blockquotes (note, tip, important, warning and caution) [see here](https://github.com/orgs/community/discussions/16925)
 
+> [!IMPORTANT]
+>
+> test
+
 ## :rocket: Getting started
 
 To install go-grip, simply:

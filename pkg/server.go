@@ -18,15 +18,27 @@ import (
 	"github.com/chrishrb/go-grip/defaults"
 )
 
-type htmlStruct struct {
-	Content      string
-	Theme        string
-	BoundingBox  bool
-	CssCodeLight string
-	CssCodeDark  string
+type Server struct {
+	parser      *Parser
+	theme       string
+	boundingBox bool
+	host        string
+	port        int
+	browser     bool
 }
 
-func (client *Client) Serve(file string) error {
+func NewServer(host string, port int, theme string, boundingBox bool, browser bool, parser *Parser) *Server {
+	return &Server{
+		host:        host,
+		port:        port,
+		theme:       theme,
+		boundingBox: boundingBox,
+		browser:     browser,
+		parser:      parser,
+	}
+}
+
+func (s *Server) Serve(file string) error {
 	directory := path.Dir(file)
 	filename := path.Base(file)
 
@@ -35,9 +47,9 @@ func (client *Client) Serve(file string) error {
 
 	validThemes := map[string]bool{"light": true, "dark": true, "auto": true}
 
-	if !validThemes[client.Theme] {
-		log.Println("Warning: Unknown theme ", client.Theme, ", defaulting to 'auto'")
-		client.Theme = "auto"
+	if !validThemes[s.theme] {
+		log.Println("Warning: Unknown theme ", s.theme, ", defaulting to 'auto'")
+		s.theme = "auto"
 	}
 
 	dir := http.Dir(directory)
@@ -62,13 +74,13 @@ func (client *Client) Serve(file string) error {
 				log.Fatal(err)
 				return
 			}
-			htmlContent := client.MdToHTML(bytes)
+			htmlContent := s.parser.MdToHTML(bytes)
 
 			// Serve
 			err = serveTemplate(w, htmlStruct{
 				Content:      string(htmlContent),
-				Theme:        client.Theme,
-				BoundingBox:  client.BoundingBox,
+				Theme:        s.theme,
+				BoundingBox:  s.boundingBox,
 				CssCodeLight: getCssCode("github"),
 				CssCodeDark:  getCssCode("github-dark"),
 			})
@@ -81,7 +93,7 @@ func (client *Client) Serve(file string) error {
 		}
 	})
 
-	addr := fmt.Sprintf("http://%s:%d/", client.Host, client.Port)
+	addr := fmt.Sprintf("http://%s:%d/", s.host, s.port)
 	if file == "" {
 		// If README.md exists then open README.md at beginning
 		readme := "README.md"
@@ -98,16 +110,15 @@ func (client *Client) Serve(file string) error {
 
 	fmt.Printf("🚀 Starting server: %s\n", addr)
 
-	if client.OpenBrowser {
+	if s.browser {
 		err := Open(addr)
 		if err != nil {
-			log.Println("Error:", err)
+			fmt.Println("❌ Error opening browser:", err)
 		}
 	}
 
 	handler := reload.Handle(http.DefaultServeMux)
-	err := http.ListenAndServe(fmt.Sprintf(":%d", client.Port), handler)
-	return err
+	return http.ListenAndServe(fmt.Sprintf(":%d", s.port), handler)
 }
 
 func readToString(dir http.Dir, filename string) ([]byte, error) {
@@ -123,6 +134,14 @@ func readToString(dir http.Dir, filename string) ([]byte, error) {
 		return nil, err
 	}
 	return buf.Bytes(), nil
+}
+
+type htmlStruct struct {
+	Content      string
+	Theme        string
+	BoundingBox  bool
+	CssCodeLight string
+	CssCodeDark  string
 }
 
 func serveTemplate(w http.ResponseWriter, html htmlStruct) error {

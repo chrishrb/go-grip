@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"os"
-	"strings"
 
 	"github.com/chrishrb/go-grip/pkg"
 	"github.com/spf13/cobra"
@@ -12,27 +11,21 @@ var rootCmd = &cobra.Command{
 	Use:   "go-grip [file]",
 	Short: "Render markdown document as html",
 	Args:  cobra.MatchAll(cobra.OnlyValidArgs),
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		theme, _ := cmd.Flags().GetString("theme")
 		browser, _ := cmd.Flags().GetBool("browser")
 		host, _ := cmd.Flags().GetString("host")
 		port, _ := cmd.Flags().GetInt("port")
 		boundingBox, _ := cmd.Flags().GetBool("bounding-box")
 
-		client := pkg.Client{
-			Theme:       strings.ToLower(theme),
-			OpenBrowser: browser,
-			Host:        host,
-			Port:        port,
-			BoundingBox: boundingBox,
-		}
-
 		var file string
 		if len(args) == 1 {
 			file = args[0]
 		}
-		err := client.Serve(file)
-		cobra.CheckErr(err)
+
+		parser := pkg.NewParser(theme)
+		server := pkg.NewServer(host, port, theme, boundingBox, browser, parser)
+		return server.Serve(file)
 	},
 }
 
