@@ -21,9 +21,19 @@ import (
 	"github.com/gomarkdown/markdown/parser"
 )
 
-var blockquotes = []string{"Note", "Tip", "Important", "Warning", "Caution"}
+var blockquotes = []string{"Note", "Tip", "Important", "Warning", "Caution", "BlockQuote"}
 
-func (client *Client) MdToHTML(bytes []byte) []byte {
+type Parser struct {
+	theme string
+}
+
+func NewParser(theme string) *Parser {
+	return &Parser{
+		theme: theme,
+	}
+}
+
+func (m Parser) MdToHTML(bytes []byte) []byte {
 	extensions := parser.NoIntraEmphasis | parser.Tables | parser.FencedCode |
 		parser.Autolink | parser.Strikethrough | parser.SpaceHeadings | parser.HeadingIDs |
 		parser.BackslashLineBreak | parser.MathJax | parser.OrderedListStart
@@ -31,22 +41,24 @@ func (client *Client) MdToHTML(bytes []byte) []byte {
 	doc := p.Parse(bytes)
 
 	htmlFlags := html.CommonFlags
-	opts := html.RendererOptions{Flags: htmlFlags, RenderNodeHook: client.renderHook}
+	opts := html.RendererOptions{Flags: htmlFlags, RenderNodeHook: m.renderHook}
 	renderer := html.NewRenderer(opts)
 
 	return markdown.Render(doc, renderer)
 }
 
-func (client *Client) renderHook(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool) {
+func (m Parser) renderHook(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool) {
 	switch node.(type) {
 	case *ast.BlockQuote:
-		return renderHookBlockquote(w, node, entering)
+		return renderHookBlockQuote()
+	case *ast.Paragraph:
+		return renderHookParagraph(w, node, entering)
 	case *ast.Text:
 		return renderHookText(w, node)
 	case *ast.ListItem:
 		return renderHookListItem(w, node, entering)
 	case *ast.CodeBlock:
-		return renderHookCodeBlock(w, node, client.Theme)
+		return renderHookCodeBlock(w, node, m.theme)
 	}
 
 	return ast.GoToNext, false
@@ -84,10 +96,14 @@ func renderHookCodeBlock(w io.Writer, node ast.Node, theme string) (ast.WalkStat
 	return ast.GoToNext, true
 }
 
-func renderHookBlockquote(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool) {
-	block := node.(*ast.BlockQuote)
+func renderHookBlockQuote() (ast.WalkStatus, bool) {
+	return ast.GoToNext, true
+}
 
-	paragraph, ok := (block.GetChildren()[0]).(*ast.Paragraph)
+func renderHookParagraph(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool) {
+	paragraph := node.(*ast.Paragraph)
+
+	_, ok := paragraph.GetParent().(*ast.BlockQuote)
 	if !ok {
 		return ast.GoToNext, false
 	}
@@ -114,7 +130,8 @@ func renderHookBlockquote(w io.Writer, node ast.Node, entering bool) (ast.WalkSt
 	// Set the message type based on the content of the blockquote
 	var err error
 	if entering {
-		s, _ := createBlockquoteStart(alert)
+		var s string
+		s, _ = createBlockquoteStart(alert)
 		_, err = io.WriteString(w, s)
 	} else {
 		_, err = io.WriteString(w, "</div>")
