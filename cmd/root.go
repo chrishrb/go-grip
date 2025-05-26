@@ -1,7 +1,9 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/chrishrb/go-grip/pkg"
 	"github.com/spf13/cobra"
@@ -17,6 +19,8 @@ var rootCmd = &cobra.Command{
 		host, _ := cmd.Flags().GetString("host")
 		port, _ := cmd.Flags().GetInt("port")
 		boundingBox, _ := cmd.Flags().GetBool("bounding-box")
+		outputDir, _ := cmd.Flags().GetString("output")
+		runAsServer, _ := cmd.Flags().GetBool("server")
 
 		var file string
 		if len(args) == 1 {
@@ -24,8 +28,21 @@ var rootCmd = &cobra.Command{
 		}
 
 		parser := pkg.NewParser(theme)
-		server := pkg.NewServer(host, port, theme, boundingBox, browser, parser)
-		return server.Serve(file)
+		srv := pkg.NewServer(host, port, theme, boundingBox, browser, parser)
+
+		if runAsServer {
+			return srv.Serve(file)
+		}
+
+		if outputDir == "" {
+			cacheDir, err := os.UserCacheDir()
+			if err != nil {
+				return fmt.Errorf("failed to get cache directory: %v", err)
+			}
+			outputDir = filepath.Join(cacheDir, "go-grip")
+		}
+
+		return srv.GenerateStaticSite(file, outputDir)
 	},
 }
 
@@ -42,4 +59,6 @@ func init() {
 	rootCmd.Flags().StringP("host", "H", "localhost", "Host to use")
 	rootCmd.Flags().IntP("port", "p", 6419, "Port to use")
 	rootCmd.Flags().Bool("bounding-box", true, "Add bounding box to HTML")
+	rootCmd.Flags().StringP("output", "o", "", "Output directory for static files (default: cache directory)")
+	rootCmd.Flags().Bool("server", false, "Run as server instead of generating static files")
 }

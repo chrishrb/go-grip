@@ -2,7 +2,7 @@
 <br />
 <div align="center">
   <a href="#">
-    <img src=".github/docs/logo-1.png" alt="Logo" height="120">
+    <img src="https://raw.githubusercontent.com/chrishrb/go-grip/main/.github/docs/logo-1.png" alt="Logo" height="120">
   </a>
 
   <h3 align="center">go-grip</h3>

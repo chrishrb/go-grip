@@ -1,3 +1,5 @@
 vendor
 result
 bin
+output
+go-grip

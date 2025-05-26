@@ -4,10 +4,13 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"io/fs"
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 	"path"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"text/template"
@@ -119,6 +122,128 @@ func (s *Server) Serve(file string) error {
 
 	handler := reload.Handle(http.DefaultServeMux)
 	return http.ListenAndServe(fmt.Sprintf(":%d", s.port), handler)
+}
+
+func (s *Server) GenerateStaticSite(file string, outputDir string) error {
+	if err := os.MkdirAll(outputDir, 0755); err != nil {
+		return fmt.Errorf("failed to create output directory: %v", err)
+	}
+
+	staticDir := path.Join(outputDir, "static")
+	if err := os.MkdirAll(staticDir, 0755); err != nil {
+		return fmt.Errorf("failed to create static directory: %v", err)
+	}
+
+	if err := copyStaticFiles(staticDir); err != nil {
+		return fmt.Errorf("failed to copy static files: %v", err)
+	}
+
+	directory := path.Dir(file)
+	if file == "" {
+		directory = "."
+	}
+
+	entries, err := os.ReadDir(directory)
+	if err != nil {
+		return fmt.Errorf("failed to read directory: %v", err)
+	}
+
+	var indexFile string
+	for _, entry := range entries {
+		if !entry.IsDir() && strings.HasSuffix(entry.Name(), ".md") {
+			content, err := os.ReadFile(path.Join(directory, entry.Name()))
+			if err != nil {
+				return fmt.Errorf("failed to read file %s: %v", entry.Name(), err)
+			}
+
+			htmlContent := s.parser.MdToHTML(content)
+
+			htmlFile := strings.TrimSuffix(entry.Name(), ".md") + ".html"
+			if entry.Name() == "README.md" {
+				htmlFile = "index.html"
+				indexFile = htmlFile
+			}
+
+			html := htmlStruct{
+				Content:      string(htmlContent),
+				Theme:        s.theme,
+				BoundingBox:  s.boundingBox,
+				CssCodeLight: getCssCode("github"),
+				CssCodeDark:  getCssCode("github-dark"),
+			}
+
+			if err := writeHTMLFile(path.Join(outputDir, htmlFile), html); err != nil {
+				return fmt.Errorf("failed to write HTML file %s: %v", htmlFile, err)
+			}
+		}
+	}
+
+	fmt.Printf("✨ Static site generated in: %s\n", outputDir)
+
+	if s.browser {
+		indexPath := path.Join(outputDir, indexFile)
+		if indexFile == "" {
+			indexPath = path.Join(outputDir, "index.html")
+		}
+		fileURL := "file://" + indexPath
+		err := Open(fileURL)
+		if err != nil {
+			fmt.Println("❌ Error opening browser:", err)
+		}
+	}
+
+	return nil
+}
+
+func copyStaticFiles(staticDir string) error {
+	dirs := []string{"css", "js", "images", "emojis"}
+	for _, dir := range dirs {
+		if err := os.MkdirAll(filepath.Join(staticDir, dir), 0755); err != nil {
+			return fmt.Errorf("failed to create directory %s: %v", dir, err)
+		}
+	}
+
+	err := fs.WalkDir(defaults.StaticFiles, "static", func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if d.IsDir() {
+			return nil
+		}
+
+		content, err := defaults.StaticFiles.ReadFile(path)
+		if err != nil {
+			return fmt.Errorf("failed to read embedded file %s: %v", path, err)
+		}
+
+		outputPath := filepath.Join(staticDir, strings.TrimPrefix(path, "static/"))
+		if err := os.WriteFile(outputPath, content, 0644); err != nil {
+			return fmt.Errorf("failed to write file %s: %v", outputPath, err)
+		}
+
+		return nil
+	})
+
+	return err
+}
+
+func writeHTMLFile(path string, html htmlStruct) error {
+	tmpl, err := template.ParseFS(defaults.Templates, "templates/layout.html")
+	if err != nil {
+		return fmt.Errorf("failed to parse template: %v", err)
+	}
+
+	file, err := os.Create(path)
+	if err != nil {
+		return fmt.Errorf("failed to create file: %v", err)
+	}
+	defer file.Close()
+
+	if err := tmpl.Execute(file, html); err != nil {
+		return fmt.Errorf("failed to execute template: %v", err)
+	}
+
+	return nil
 }
 
 func readToString(dir http.Dir, filename string) ([]byte, error) {
