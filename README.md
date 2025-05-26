@@ -57,35 +57,41 @@ go install github.com/chrishrb/go-grip@latest
 
 ## :hammer: Usage
 
-To render the `README.md` file simply execute:
+By default, go-grip generates static HTML files from your markdown. To render a markdown file:
 
 ```bash
 go-grip README.md
-# or
-go-grip
 ```
 
-The browser will automatically open on http://localhost:6419. You can disable this behaviour with the `-b=false` option.
-
-You can also specify a port:
+The generated HTML will be saved in your cache directory by default, and the browser will automatically open to view it. You can specify a custom output directory:
 
 ```bash
-go-grip -p 80 README.md
+go-grip -o /path/to/output README.md
 ```
 
-or just open a file-tree with all available files in the current directory:
+To run as a server instead of generating static files:
 
 ```bash
-go-grip -r=false
+go-grip --server README.md
 ```
 
-It's also possible to activate the darkmode:
+You can also specify a port for the server:
 
 ```bash
-go-grip -d .
+go-grip --server -p 80 README.md
 ```
 
-To terminate the current server simply press `CTRL-C`.
+To disable automatic browser opening:
+
+```bash
+go-grip -b=false README.md
+```
+
+To activate dark mode:
+
+```bash
+go-grip --theme dark README.md
+```
 
 ## :pencil: Examples
 
