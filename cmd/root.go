@@ -25,6 +25,8 @@ var rootCmd = &cobra.Command{
 		var file string
 		if len(args) == 1 {
 			file = args[0]
+		} else {
+			return fmt.Errorf("no file specified")
 		}
 
 		parser := pkg.NewParser(theme)
