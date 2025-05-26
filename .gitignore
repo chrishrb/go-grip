@@ -1,5 +1,5 @@
 vendor
 result
-bin
+bin/
 output
-./go-grip
+go-grip
