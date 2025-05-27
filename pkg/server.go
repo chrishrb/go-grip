@@ -12,6 +12,7 @@ import (
 	"path"
 	"path/filepath"
 	"regexp"
+	"sort"
 	"strings"
 	"text/template"
 
@@ -71,7 +72,6 @@ func (s *Server) Serve(file string) error {
 		}
 
 		if err == nil && regex.MatchString(r.URL.Path) {
-			// Open file and convert to html
 			bytes, err := readToString(dir, r.URL.Path)
 			if err != nil {
 				log.Fatal(err)
@@ -98,7 +98,6 @@ func (s *Server) Serve(file string) error {
 
 	addr := fmt.Sprintf("http://%s:%d/", s.host, s.port)
 	if file == "" {
-		// If README.md exists then open README.md at beginning
 		readme := "README.md"
 		f, err := dir.Open(readme)
 		if err == nil {
@@ -111,12 +110,12 @@ func (s *Server) Serve(file string) error {
 		addr, _ = url.JoinPath(addr, filename)
 	}
 
-	fmt.Printf("🚀 Starting server: %s\n", addr)
+	fmt.Printf("Starting server: %s\n", addr)
 
 	if s.browser {
 		err := Open(addr)
 		if err != nil {
-			fmt.Println("❌ Error opening browser:", err)
+			fmt.Println("Error opening browser:", err)
 		}
 	}
 
@@ -125,11 +124,23 @@ func (s *Server) Serve(file string) error {
 }
 
 func (s *Server) GenerateStaticSite(file string, outputDir string) error {
-	if err := os.MkdirAll(outputDir, 0755); err != nil {
+	fmt.Println("Warning: GenerateStaticSite is deprecated. Use GenerateSingleFile or GenerateDirectoryFiles instead.")
+
+	absFilePath, err := filepath.Abs(file)
+	if err != nil {
+		return fmt.Errorf("failed to get absolute path: %v", err)
+	}
+
+	absOutputDir, err := filepath.Abs(outputDir)
+	if err != nil {
+		return fmt.Errorf("failed to get absolute path: %v", err)
+	}
+
+	if err := os.MkdirAll(absOutputDir, 0755); err != nil {
 		return fmt.Errorf("failed to create output directory: %v", err)
 	}
 
-	staticDir := path.Join(outputDir, "static")
+	staticDir := path.Join(absOutputDir, "static")
 	if err := os.MkdirAll(staticDir, 0755); err != nil {
 		return fmt.Errorf("failed to create static directory: %v", err)
 	}
@@ -138,7 +149,7 @@ func (s *Server) GenerateStaticSite(file string, outputDir string) error {
 		return fmt.Errorf("failed to copy static files: %v", err)
 	}
 
-	directory := path.Dir(file)
+	directory := path.Dir(absFilePath)
 	if file == "" {
 		directory = "."
 	}
@@ -172,23 +183,26 @@ func (s *Server) GenerateStaticSite(file string, outputDir string) error {
 				CssCodeDark:  getCssCode("github-dark"),
 			}
 
-			if err := writeHTMLFile(path.Join(outputDir, htmlFile), html); err != nil {
+			outputFilePath := path.Join(absOutputDir, htmlFile)
+			if err := writeHTMLFile(outputFilePath, html); err != nil {
 				return fmt.Errorf("failed to write HTML file %s: %v", htmlFile, err)
 			}
+
+			fmt.Printf("Generated HTML file: %s\n", outputFilePath)
 		}
 	}
 
-	fmt.Printf("✨ Static site generated in: %s\n", outputDir)
+	fmt.Printf("Output directory: %s\n", absOutputDir)
 
 	if s.browser {
-		indexPath := path.Join(outputDir, indexFile)
+		indexPath := path.Join(absOutputDir, indexFile)
 		if indexFile == "" {
-			indexPath = path.Join(outputDir, "index.html")
+			indexPath = path.Join(absOutputDir, "index.html")
 		}
 		fileURL := "file://" + indexPath
 		err := Open(fileURL)
 		if err != nil {
-			fmt.Println("❌ Error opening browser:", err)
+			fmt.Println("Error opening browser:", err)
 		}
 	}
 
@@ -285,4 +299,218 @@ func getCssCode(style string) string {
 	s := styles.Get(style)
 	_ = formatter.WriteCSS(buf, s)
 	return buf.String()
+}
+
+func (s *Server) GenerateSingleFile(filePath string, outputDir string) error {
+	absOutputDir, err := filepath.Abs(outputDir)
+	if err != nil {
+		return fmt.Errorf("failed to get absolute path: %v", err)
+	}
+
+	if err := os.MkdirAll(absOutputDir, 0755); err != nil {
+		return fmt.Errorf("failed to create output directory: %v", err)
+	}
+
+	staticDir := path.Join(absOutputDir, "static")
+	if err := os.MkdirAll(staticDir, 0755); err != nil {
+		return fmt.Errorf("failed to create static directory: %v", err)
+	}
+
+	if err := copyStaticFiles(staticDir); err != nil {
+		return fmt.Errorf("failed to copy static files: %v", err)
+	}
+
+	absFilePath, err := filepath.Abs(filePath)
+	if err != nil {
+		return fmt.Errorf("failed to get absolute path: %v", err)
+	}
+
+	content, err := os.ReadFile(absFilePath)
+	if err != nil {
+		return fmt.Errorf("failed to read file %s: %v", absFilePath, err)
+	}
+
+	htmlContent := s.parser.MdToHTML(content)
+
+	baseFileName := filepath.Base(absFilePath)
+	htmlFile := strings.TrimSuffix(baseFileName, ".md") + ".html"
+
+	if baseFileName == "README.md" {
+		htmlFile = "index.html"
+	}
+
+	outputFilePath := path.Join(absOutputDir, htmlFile)
+
+	html := htmlStruct{
+		Content:      string(htmlContent),
+		Theme:        s.theme,
+		BoundingBox:  s.boundingBox,
+		CssCodeLight: getCssCode("github"),
+		CssCodeDark:  getCssCode("github-dark"),
+	}
+
+	if err := writeHTMLFile(outputFilePath, html); err != nil {
+		return fmt.Errorf("failed to write HTML file %s: %v", htmlFile, err)
+	}
+
+	fmt.Printf("Generated HTML file: %s\n", outputFilePath)
+
+	if s.browser {
+		fileURL := "file://" + outputFilePath
+		err := Open(fileURL)
+		if err != nil {
+			fmt.Println("Error opening browser:", err)
+		}
+	}
+
+	return nil
+}
+
+func (s *Server) GenerateDirectoryFiles(dirPath string, outputDir string) error {
+	absDirPath, err := filepath.Abs(dirPath)
+	if err != nil {
+		return fmt.Errorf("failed to get absolute path: %v", err)
+	}
+
+	absOutputDir, err := filepath.Abs(outputDir)
+	if err != nil {
+		return fmt.Errorf("failed to get absolute path: %v", err)
+	}
+
+	if err := os.MkdirAll(absOutputDir, 0755); err != nil {
+		return fmt.Errorf("failed to create output directory: %v", err)
+	}
+
+	staticDir := path.Join(absOutputDir, "static")
+	if err := os.MkdirAll(staticDir, 0755); err != nil {
+		return fmt.Errorf("failed to create static directory: %v", err)
+	}
+
+	if err := copyStaticFiles(staticDir); err != nil {
+		return fmt.Errorf("failed to copy static files: %v", err)
+	}
+
+	entries, err := os.ReadDir(absDirPath)
+	if err != nil {
+		return fmt.Errorf("failed to read directory: %v", err)
+	}
+
+	foundMarkdown := false
+
+	var indexFile string
+	generatedFiles := make(map[string]string) // filename -> title
+
+	for _, entry := range entries {
+		if !entry.IsDir() && strings.HasSuffix(entry.Name(), ".md") {
+			foundMarkdown = true
+
+			mdFilePath := path.Join(absDirPath, entry.Name())
+			content, err := os.ReadFile(mdFilePath)
+			if err != nil {
+				return fmt.Errorf("failed to read file %s: %v", mdFilePath, err)
+			}
+
+			title := extractTitle(content, entry.Name())
+
+			htmlContent := s.parser.MdToHTML(content)
+
+			htmlFile := strings.TrimSuffix(entry.Name(), ".md") + ".html"
+
+			if entry.Name() == "README.md" {
+				htmlFile = "index.html"
+				indexFile = htmlFile
+			}
+
+			outputFilePath := path.Join(absOutputDir, htmlFile)
+
+			generatedFiles[htmlFile] = title
+
+			html := htmlStruct{
+				Content:      string(htmlContent),
+				Theme:        s.theme,
+				BoundingBox:  s.boundingBox,
+				CssCodeLight: getCssCode("github"),
+				CssCodeDark:  getCssCode("github-dark"),
+			}
+
+			if err := writeHTMLFile(outputFilePath, html); err != nil {
+				return fmt.Errorf("failed to write HTML file %s: %v", outputFilePath, err)
+			}
+
+			fmt.Printf("Generated HTML file: %s\n", outputFilePath)
+		}
+	}
+
+	if !foundMarkdown {
+		return fmt.Errorf("no markdown files found in directory %s", absDirPath)
+	}
+
+	if indexFile == "" {
+		dirName := filepath.Base(absDirPath)
+		indexContent := generateDirectoryIndex(dirName, generatedFiles)
+
+		html := htmlStruct{
+			Content:      string(indexContent),
+			Theme:        s.theme,
+			BoundingBox:  s.boundingBox,
+			CssCodeLight: getCssCode("github"),
+			CssCodeDark:  getCssCode("github-dark"),
+		}
+
+		indexFile = "index.html"
+		indexPath := path.Join(absOutputDir, indexFile)
+
+		if err := writeHTMLFile(indexPath, html); err != nil {
+			return fmt.Errorf("failed to write index file: %v", err)
+		}
+
+		fmt.Printf("Generated index file: %s\n", indexPath)
+	}
+
+	fmt.Printf("Output directory: %s\n", absOutputDir)
+
+	if s.browser {
+		fileURL := "file://" + path.Join(absOutputDir, indexFile)
+		err := Open(fileURL)
+		if err != nil {
+			fmt.Println("Error opening browser:", err)
+		}
+	}
+
+	return nil
+}
+
+func extractTitle(content []byte, filename string) string {
+	lines := strings.Split(string(content), "\n")
+	for _, line := range lines {
+		if strings.HasPrefix(strings.TrimSpace(line), "# ") {
+			return strings.TrimSpace(strings.TrimPrefix(strings.TrimSpace(line), "# "))
+		}
+	}
+
+	return strings.TrimSuffix(filename, filepath.Ext(filename))
+}
+
+func generateDirectoryIndex(dirName string, files map[string]string) string {
+	var sb strings.Builder
+
+	sb.WriteString("<h1>Directory: " + dirName + "</h1>\n")
+	sb.WriteString("<p>The following files were generated:</p>\n")
+	sb.WriteString("<ul>\n")
+
+	var filenames []string
+	for filename := range files {
+		if filename != "index.html" {
+			filenames = append(filenames, filename)
+		}
+	}
+	sort.Strings(filenames)
+
+	for _, filename := range filenames {
+		title := files[filename]
+		sb.WriteString(fmt.Sprintf("  <li><a href=\"%s\">%s</a></li>\n", filename, title))
+	}
+
+	sb.WriteString("</ul>\n")
+	return sb.String()
 }

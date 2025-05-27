@@ -8,7 +8,7 @@
   <h3 align="center">go-grip</h3>
 
   <p align="center">
-    Render your markdown files local<br>- with the look of GitHub
+    Render your markdown files local<br> (github flavored rendering)
   </p>
 </div>
 
@@ -55,52 +55,119 @@ go install github.com/chrishrb/go-grip@latest
 > You can also use nix flakes to install this plugin.
 > More useful information [here](https://nixos.wiki/wiki/Flakes).
 
-## :hammer: Usage
+## :hammer: Commands and Usage
 
-By default, go-grip generates static HTML files from your markdown. To render a markdown file:
-
-```bash
-go-grip README.md
-```
-
-The generated HTML will be saved in your cache directory by default, and the browser will automatically open to view it. You can specify a custom output directory:
+### Basic Usage
 
 ```bash
-go-grip -o /path/to/output README.md
+
+go-grip [COMMAND] <args>
+
+# go-grip --help
+Available commands:
+  go-grip render FILE   - Generate static HTML from markdown
+  go-grip serve FILE    - Serve markdown via local HTTP server
+
+Available Commands:
+  completion   Generate the autocompletion script for the specified shell
+  emojiscraper Scrape emojis from gist
+  help         Help about any command
+  render       Render markdown document as html
+  serve        Run as a server and serve the markdown file
+  version      Print the version number of go-grip
+
+Flags:
+  -h, --help   help for go-grip
+
+Use "go-grip [command] --help" for more information about a command.
+
 ```
 
-To run as a server instead of generating static files:
+### Commands
+
+#### `render` - Generate static HTML Files
+
+Render a markdown file as static HTML.
+
+```
+Usage:
+  go-grip render [file|directory] [flags]
+
+Optional Flags:
+      --bounding-box    Add bounding box to HTML output (default true)
+  -d, --directory       Render all markdown files in directory
+  -h, --help            help for render
+  -o, --output string   Output directory for static files
+      --theme string    Select CSS theme [light/dark/auto] (default "auto")
+
+```
+
+Examples:
 
 ```bash
-go-grip --server README.md
+# render a single markdown file (opens it in a new browser tab)
+go-grip render README.md
+
+# specify custom output directory
+go-grip render README.md -o /path/to/output
+
+# render ALL markdown files in a directory
+go-grip render -d /path/to/my-note/ --output ./html-notes/
 ```
 
-You can also specify a port for the server:
+### `serve` - Live Preview Server
+
+Start a local server to render and serve the markdown file.
+
+The server will watch for changes to the file and automatically refresh the browser.
+This is useful for live previewing markdown as you edit it.
+
+```
+Usage:
+  go-grip serve FILE [flags]
+
+Flags:
+      --bounding-box   Add bounding box to HTML output (default true)
+  -b, --browser        Open browser tab automatically (default true)
+  -h, --help           help for serve
+  -H, --host string    Host to listen on (default "localhost")
+  -p, --port int       Port to listen on (default 6419)
+      --theme string   Select CSS theme [light/dark/auto] (default "auto")
+```
+
+Examples:
 
 ```bash
-go-grip --server -p 80 README.md
+# Start server for live preview of a file
+go-grip serve README.md
+
+# Specify host and port
+go-grip serve README.md -H 0.0.0.0 -p 8080
+
+# Disable automatic browser opening
+go-grip serve README.md -b=false
 ```
 
-To disable automatic browser opening:
+#### `-d/--directory` flag
 
-```bash
-go-grip -b=false README.md
-```
+When passed after the the `render` command, go-grip will:
 
-To activate dark mode:
+1. Generate HTML for all markdown files in the directory
+2. Create an index page linking to all rendered files
+3. Copy all required static assets (CSS, JS, images)
 
-```bash
-go-grip --theme dark README.md
-```
-
-## :pencil: Examples
+## :pencil: Screen shots
 
 <img src="./.github/docs/example-1.png" alt="examples" width="1000"/>
 
-## :bug: Known TODOs / Bugs
+## :bug: TODOs
 
 - [ ] Tests and refactoring
-- [ ] Make it possible to export the generated html
+- [ ] Move `theme` selection feature from CLI to a button in rendered HTML
+- [ ] Auto `Table of content` generation
+- [ ] Purged static files (Opens the door for Single HTML output)
+- [ ] Github flavored `blob` support
+- [ ] Output to Image
 
 ## :pushpin: Similar tools
 
