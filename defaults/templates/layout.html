@@ -3,28 +3,28 @@
   <head>
     <meta charset="utf-8" />
     <title>go-grip - markdown preview</title>
-    <link rel="icon" type="image/x-icon" href="/static/images/favicon.ico" />
+    <link rel="icon" type="image/x-icon" href="static/images/favicon.ico" />
     {{if eq .Theme "dark" }}
-    <link rel="stylesheet" href="/static/css/github-markdown-dark.css" />
+    <link rel="stylesheet" href="static/css/github-markdown-dark.css" />
     <style>{{ .CssCodeDark }}</style>
     {{else if eq .Theme "light" }}
-    <link rel="stylesheet" href="/static/css/github-markdown-light.css" />
+    <link rel="stylesheet" href="static/css/github-markdown-light.css" />
     <style>{{ .CssCodeLight }}</style>
     {{else}}
     <link
       rel="stylesheet"
-      href="/static/css/github-markdown-light.css"
+      href="static/css/github-markdown-light.css"
       media="(prefers-color-scheme: light)"
     />
     <link
       rel="stylesheet"
-      href="/static/css/github-markdown-dark.css"
+      href="static/css/github-markdown-dark.css"
       media="(prefers-color-scheme: dark)"
     />
     <style media="(prefers-color-scheme: light)">{{ .CssCodeLight }}</style>
     <style media="(prefers-color-scheme: dark)">{{ .CssCodeDark }}</style>
     {{end}}
-    <link rel="stylesheet" href="/static/css/github-print.css" media="print" />
+    <link rel="stylesheet" href="static/css/github-print.css" media="print" />
   </head>
 
   <body class="markdown-body">
