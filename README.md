@@ -160,7 +160,7 @@ When passed after the the `render` command, go-grip will:
 
 <img src="./.github/docs/example-1.png" alt="examples" width="1000"/>
 
-## :bug: Known TODOs / Bugs
+## :bug: TODOs
 
 - [ ] Tests and refactoring
 - [ ] Move `theme` selection feature from CLI to a button in rendered HTML
