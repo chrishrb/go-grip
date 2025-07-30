@@ -36,7 +36,8 @@ func NewParser(theme string) *Parser {
 func (m Parser) MdToHTML(bytes []byte) []byte {
 	extensions := parser.NoIntraEmphasis | parser.Tables | parser.FencedCode |
 		parser.Autolink | parser.Strikethrough | parser.SpaceHeadings | parser.HeadingIDs |
-		parser.BackslashLineBreak | parser.MathJax | parser.OrderedListStart
+		parser.BackslashLineBreak | parser.MathJax | parser.OrderedListStart |
+		parser.AutoHeadingIDs
 	p := parser.NewWithExtensions(extensions)
 	doc := p.Parse(bytes)
 
