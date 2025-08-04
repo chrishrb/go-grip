@@ -1,3 +1,6 @@
 vendor
 result
-bin
+bin/
+output/
+go-grip
+tests-local/
