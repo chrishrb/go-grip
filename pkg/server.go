@@ -25,16 +25,18 @@ type Server struct {
 	host        string
 	port        int
 	browser     bool
+	enableReload bool
 }
 
-func NewServer(host string, port int, theme string, boundingBox bool, browser bool, parser *Parser) *Server {
+func NewServer(host string, port int, theme string, boundingBox bool, browser bool, enableReload bool, parser *Parser) *Server {
 	return &Server{
-		host:        host,
-		port:        port,
-		theme:       theme,
-		boundingBox: boundingBox,
-		browser:     browser,
-		parser:      parser,
+		host:         host,
+		port:         port,
+		theme:        theme,
+		boundingBox:  boundingBox,
+		browser:      browser,
+		enableReload: enableReload,
+		parser:       parser,
 	}
 }
 
@@ -42,8 +44,15 @@ func (s *Server) Serve(file string) error {
 	directory := path.Dir(file)
 	filename := path.Base(file)
 
-	reload := reload.New(directory)
-	reload.DebugLog = log.New(io.Discard, "", 0)
+	var reloadMiddleware *reload.Reloader
+	if s.enableReload {
+		reloadMiddleware = reload.New(directory)
+		reloadMiddleware.DebugLog = log.New(io.Discard, "", 0)
+		// Fix WebSocket CORS issues for development
+		reloadMiddleware.Upgrader.CheckOrigin = func(r *http.Request) bool {
+			return true
+		}
+	}
 
 	validThemes := map[string]bool{"light": true, "dark": true, "auto": true}
 
@@ -117,7 +126,13 @@ func (s *Server) Serve(file string) error {
 		}
 	}
 
-	handler := reload.Handle(http.DefaultServeMux)
+	var handler http.Handler = http.DefaultServeMux
+	if s.enableReload {
+		handler = reloadMiddleware.Handle(http.DefaultServeMux)
+		fmt.Printf("📡 Auto-reload enabled. Files will trigger browser refresh.\n")
+	} else {
+		fmt.Printf("🔄 Auto-reload disabled. Use F5 to manually refresh.\n")
+	}
 	return http.ListenAndServe(fmt.Sprintf(":%d", s.port), handler)
 }
 

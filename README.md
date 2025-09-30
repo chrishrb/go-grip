@@ -87,6 +87,12 @@ It's also possible to activate the darkmode:
 go-grip -d .
 ```
 
+To disable automatic browser reload on file changes (useful for stable editing):
+
+```bash
+go-grip --no-reload README.md
+```
+
 To terminate the current server simply press `CTRL-C`.
 
 ## :pencil: Examples
