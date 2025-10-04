@@ -25,9 +25,10 @@
     <style media="(prefers-color-scheme: dark)">{{ .CssCodeDark }}</style>
     {{end}}
     <link rel="stylesheet" href="/static/css/github-print.css" media="print" />
+    <link rel="stylesheet" href="/static/css/github-mermaid.css" />
   </head>
 
-  <body class="markdown-body">
+  <body class="markdown-body" data-theme="{{ .Theme }}">
     <div class="container">
       <div {{if .BoundingBox }} class="container-inner" {{end}}>
         {{ .Content }}
@@ -36,5 +37,7 @@
     {{if .BoundingBox}}
     <footer class="container footer">Made with &hearts; by chrishrb</footer>
     {{end}}
+    <script src="/static/js/mermaid.min.js"></script>
+    <script src="/static/js/mermaid-init.js"></script>
   </body>
 </html>
