@@ -51,9 +51,7 @@ func (m Parser) MdToHTML(bytes []byte) []byte {
 func (m Parser) renderHook(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool) {
 	switch node.(type) {
 	case *ast.BlockQuote:
-		return renderHookBlockQuote()
-	case *ast.Paragraph:
-		return renderHookParagraph(w, node, entering)
+		return renderHookBlockQuote(w, node, entering)
 	case *ast.Text:
 		return renderHookText(w, node)
 	case *ast.ListItem:
@@ -97,38 +95,14 @@ func renderHookCodeBlock(w io.Writer, node ast.Node, theme string) (ast.WalkStat
 	return ast.GoToNext, true
 }
 
-func renderHookBlockQuote() (ast.WalkStatus, bool) {
-	return ast.GoToNext, true
-}
-
-func renderHookParagraph(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool) {
-	paragraph := node.(*ast.Paragraph)
-
-	_, ok := paragraph.GetParent().(*ast.BlockQuote)
+func renderHookBlockQuote(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool) {
+	blockquote := node.(*ast.BlockQuote)
+	alert, ok := alertTypeFromBlockquote(blockquote)
 	if !ok {
 		return ast.GoToNext, false
 	}
 
-	t, ok := (paragraph.GetChildren()[0]).(*ast.Text)
-	if !ok {
-		return ast.GoToNext, false
-	}
-
-	// Get the text content of the blockquote
-	content := string(t.Literal)
-
-	var alert string
-	for _, b := range blockquotes {
-		if strings.HasPrefix(content, fmt.Sprintf("[!%s]", strings.ToUpper(b))) {
-			alert = strings.ToLower(b)
-		}
-	}
-
-	if alert == "" {
-		return ast.GoToNext, false
-	}
-
-	// Set the message type based on the content of the blockquote
+	// Special rendering for blockquote alerts
 	var err error
 	if entering {
 		var s string
@@ -142,6 +116,33 @@ func renderHookParagraph(w io.Writer, node ast.Node, entering bool) (ast.WalkSta
 	}
 
 	return ast.GoToNext, true
+}
+
+func alertTypeFromBlockquote(blockquote *ast.BlockQuote) (string, bool) {
+	if len(blockquote.GetChildren()) == 0 {
+		return "", false
+	}
+	paragraph, ok := blockquote.GetChildren()[0].(*ast.Paragraph)
+	if !ok || len(paragraph.GetChildren()) == 0 {
+		return "", false
+	}
+	text, ok := paragraph.GetChildren()[0].(*ast.Text)
+	if !ok {
+		return "", false
+	}
+
+	return extractAlertText(string(text.Literal))
+}
+
+func extractAlertText(content string) (string, bool) {
+	// Case-insensitive match with the alert text
+	trimmed := strings.ToUpper(strings.TrimSpace(content))
+	for _, b := range blockquotes {
+		if trimmed == fmt.Sprintf("[!%s]", strings.ToUpper(b)) {
+			return strings.ToLower(b), true
+		}
+	}
+	return "", false
 }
 
 func renderHookText(w io.Writer, node ast.Node) (ast.WalkStatus, bool) {
@@ -172,16 +173,9 @@ func renderHookText(w io.Writer, node ast.Node) (ast.WalkStatus, bool) {
 
 	_, ok = paragraph.GetParent().(*ast.BlockQuote)
 	if ok {
-		// Remove prefixes
-		for _, b := range blockquotes {
-			content, found := strings.CutPrefix(withEmoji, fmt.Sprintf("[!%s]", strings.ToUpper(b)))
-			if found {
-				_, err := io.WriteString(w, content)
-				if err != nil {
-					log.Println("Error:", err)
-				}
-				return ast.GoToNext, true
-			}
+		// Remove alert prefixes
+		if _, ok := extractAlertText(withEmoji); ok {
+			return ast.GoToNext, true
 		}
 	}
 
