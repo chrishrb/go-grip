@@ -37,7 +37,7 @@ func (m Parser) MdToHTML(bytes []byte) []byte {
 	extensions := parser.NoIntraEmphasis | parser.Tables | parser.FencedCode |
 		parser.Autolink | parser.Strikethrough | parser.SpaceHeadings | parser.HeadingIDs |
 		parser.BackslashLineBreak | parser.MathJax | parser.OrderedListStart |
-		parser.AutoHeadingIDs | parser.NoEmptyLineBeforeBlock
+		parser.AutoHeadingIDs | parser.NoEmptyLineBeforeBlock | parser.Footnotes
 	p := parser.NewWithExtensions(extensions)
 	doc := p.Parse(bytes)
 
