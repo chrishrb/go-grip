@@ -197,13 +197,18 @@ func renderHookText(w io.Writer, node ast.Node) (ast.WalkStatus, bool) {
 			return ast.GoToNext, true
 		}
 
+		// A completed task is marked with a case-insensitive 'x'
 		content, found = strings.CutPrefix(withEmoji, "[x]")
+		if !found {
+			content, found = strings.CutPrefix(withEmoji, "[X]")
+		}
 		content = `<input type="checkbox" disabled class="task-list-item-checkbox" checked> ` + content
 		if found {
 			_, err := io.WriteString(w, content)
 			if err != nil {
 				log.Println("Error:", err)
 			}
+			return ast.GoToNext, true
 		}
 	}
 
@@ -227,7 +232,7 @@ func renderHookListItem(w io.Writer, node ast.Node, entering bool) (ast.WalkStat
 		return ast.GoToNext, false
 	}
 
-	if !(strings.HasPrefix(string(t.Literal), "[ ]") || strings.HasPrefix(string(t.Literal), "[x]")) {
+	if !(strings.HasPrefix(string(t.Literal), "[ ]") || strings.HasPrefix(string(t.Literal), "[x]") || strings.HasPrefix(string(t.Literal), "[X]")) {
 		return ast.GoToNext, false
 	}
 
