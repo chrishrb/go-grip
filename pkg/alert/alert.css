@@ -1,0 +1,121 @@
+/* GitHub-style Alert Blocks */
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: 0.25em solid;
+}
+
+.markdown-alert-title {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  margin-top: 0;
+}
+
+.markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+/* Note - Blue */
+.markdown-alert-note {
+  border-color: #3b82f6;
+  background-color: rgba(59, 130, 246, 0.1);
+}
+
+.markdown-alert-note .markdown-alert-title {
+  color: #3b82f6;
+}
+
+/* Tip - Green */
+.markdown-alert-tip {
+  border-color: #10b981;
+  background-color: rgba(16, 185, 129, 0.1);
+}
+
+.markdown-alert-tip .markdown-alert-title {
+  color: #10b981;
+}
+
+/* Important - Purple */
+.markdown-alert-important {
+  border-color: #8b5cf6;
+  background-color: rgba(139, 92, 246, 0.1);
+}
+
+.markdown-alert-important .markdown-alert-title {
+  color: #8b5cf6;
+}
+
+/* Warning - Yellow/Orange */
+.markdown-alert-warning {
+  border-color: #f59e0b;
+  background-color: rgba(245, 158, 11, 0.1);
+}
+
+.markdown-alert-warning .markdown-alert-title {
+  color: #f59e0b;
+}
+
+/* Caution - Red */
+.markdown-alert-caution {
+  border-color: #ef4444;
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+.markdown-alert-caution .markdown-alert-title {
+  color: #ef4444;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .markdown-alert-note {
+    border-color: #60a5fa;
+    background-color: rgba(96, 165, 250, 0.15);
+  }
+  
+  .markdown-alert-note .markdown-alert-title {
+    color: #60a5fa;
+  }
+  
+  .markdown-alert-tip {
+    border-color: #34d399;
+    background-color: rgba(52, 211, 153, 0.15);
+  }
+  
+  .markdown-alert-tip .markdown-alert-title {
+    color: #34d399;
+  }
+  
+  .markdown-alert-important {
+    border-color: #a78bfa;
+    background-color: rgba(167, 139, 250, 0.15);
+  }
+  
+  .markdown-alert-important .markdown-alert-title {
+    color: #a78bfa;
+  }
+  
+  .markdown-alert-warning {
+    border-color: #fbbf24;
+    background-color: rgba(251, 191, 36, 0.15);
+  }
+  
+  .markdown-alert-warning .markdown-alert-title {
+    color: #fbbf24;
+  }
+  
+  .markdown-alert-caution {
+    border-color: #f87171;
+    background-color: rgba(248, 113, 113, 0.15);
+  }
+  
+  .markdown-alert-caution .markdown-alert-title {
+    color: #f87171;
+  }
+}

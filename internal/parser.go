@@ -3,6 +3,7 @@ package internal
 import (
 	"bytes"
 
+	"github.com/chrishrb/go-grip/pkg/alert"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark-emoji"
 	"github.com/yuin/goldmark/extension"
@@ -27,6 +28,7 @@ func (m Parser) MdToHTML(input []byte) ([]byte, error) {
 			extension.GFM,
 			emoji.Emoji,
 			&hashtag.Extender{},
+			alert.New(),
 		),
 		goldmark.WithParserOptions(
 			parser.WithAutoHeadingID(),
