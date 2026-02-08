@@ -3,7 +3,7 @@ package cmd
 import (
 	"os"
 
-	"github.com/chrishrb/go-grip/pkg"
+	"github.com/chrishrb/go-grip/internal"
 	"github.com/spf13/cobra"
 )
 
@@ -24,8 +24,8 @@ var rootCmd = &cobra.Command{
 			file = args[0]
 		}
 
-		parser := pkg.NewParser(theme)
-		server := pkg.NewServer(host, port, theme, boundingBox, browser, !noReload, parser)
+		parser := internal.NewParser(theme)
+		server := internal.NewServer(host, port, theme, boundingBox, browser, !noReload, parser)
 		return server.Serve(file)
 	},
 }

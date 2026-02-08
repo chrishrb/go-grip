@@ -12,6 +12,16 @@
   </p>
 </div>
 
+## Table of Contents
+
+- [About](#question-about)
+- [Features](#zap-features)
+- [Getting started](#rocket-getting-started)
+- [Usage](#hammer-usage)
+- [Examples](#pencil-examples)
+- [Known TODOs / Bugs](#bug-known-todos--bugs)
+- [Similar tools](#pushpin-similar-tools)
+
 ## :question: About
 
 **go-grip** is a lightweight, Go-based tool designed to render Markdown files locally, replicating GitHub's style. It offers features like syntax highlighting, dark mode, and support for mermaid diagrams, providing a seamless and visually consistent way to preview Markdown files in your browser.
@@ -27,15 +37,14 @@ This project is a reimplementation of the original Python-based [grip](https://g
 - [x] Todo list like the one on GitHub
 - Support for github markdown emojis :+1: :bowtie:
 - Support for mermaid diagrams
-- 🌍 **Enhanced multilingual print support** - optimized for global languages including Chinese, Japanese, Korean, Arabic, Hindi, and more
-- 🖨️ **Professional print layout** - optimized margins, typography, and page breaks for high-quality printing
+- hashtag linking in page (see table of contents)
 
 ```mermaid
 graph TD;
-      A-->B;
-      A-->C;
-      B-->D;
-      C-->D;
+    A-->B;
+    A-->C;
+    B-->D;
+    C-->D;
 ```
 
 > [!TIP]
@@ -99,32 +108,12 @@ To terminate the current server simply press `CTRL-C`.
 
 <img src="./.github/docs/example-1.png" alt="examples" width="1000"/>
 
-## :printer: Print Features
-
-**go-grip** now includes comprehensive print optimization for global users:
-
-### Multilingual Font Support
-- **East Asian**: Chinese (Simplified/Traditional), Japanese, Korean
-- **South Asian**: Hindi, Tamil, Bengali, and other Indic languages  
-- **Middle Eastern**: Arabic, Hebrew with proper RTL support
-- **European**: Latin, Cyrillic scripts (Russian, Ukrainian, etc.)
-- **Southeast Asian**: Thai, Khmer, and more
-
-### Print Layout Optimization
-- **Smart margins**: Left 2cm (binding edge), others 1.5cm
-- **Professional typography**: Optimized font sizes and line spacing
-- **Page break control**: Prevents awkward splits in tables, code blocks
-- **Clean backgrounds**: Removes backgrounds while preserving colors
-- **URL printing**: Shows link destinations for reference
-
-### Usage
-1. Open any markdown file with `go-grip filename.md`
-2. Use browser's print function (`Ctrl+P` / `Cmd+P`)
-3. Enjoy high-quality multilingual printouts!
-
 ## :bug: Known TODOs / Bugs
 
-- [ ] Tests and refactoring
+- [ ] Add github mermaid support
+- [ ] Add TIP, WARNING, .. alert support
+- [ ] Add additonal github emojis
+- [ ] Fix TODO lists (no dots before)
 - [ ] Make it possible to export the generated html
 
 ## :pushpin: Similar tools

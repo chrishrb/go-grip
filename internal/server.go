@@ -1,4 +1,4 @@
-package pkg
+package internal
 
 import (
 	"bytes"
@@ -83,7 +83,11 @@ func (s *Server) Serve(file string) error {
 				log.Fatal(err)
 				return
 			}
-			htmlContent := s.parser.MdToHTML(bytes)
+			htmlContent, err := s.parser.MdToHTML(bytes)
+			if err != nil {
+				log.Fatal(err)
+				return
+			}
 
 			// Serve
 			err = serveTemplate(w, htmlStruct{
