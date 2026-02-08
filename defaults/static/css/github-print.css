@@ -1,9 +1,374 @@
-.container-inner {
-  border-width: 0;
-  border-color: transparent;
-  border-style: none;
-  border-radius: 0;
-  margin-top: 0;
-  margin-bottom: 0;
-  padding: 0;
+@media print {
+  /* ===========================================
+   * COMPREHENSIVE PRINT OPTIMIZATION
+   * Supports global multilingual typography
+   * =========================================== */
+
+  /* ========== GLOBAL RESET & LAYOUT ========== */
+  * {
+    /* Universal multilingual font stack optimized for print */
+    font-family: 
+      /* System fonts - best quality */
+      -apple-system, BlinkMacSystemFont, "Segoe UI",
+      /* Western European languages */
+      "Helvetica Neue", Helvetica, Arial,
+      /* East Asian languages */
+      "Microsoft YaHei", "微软雅黑",                    /* Simplified Chinese (Windows) */
+      "PingFang SC", "苹方-简",                         /* Simplified Chinese (macOS) */
+      "Hiragino Sans GB", "冬青黑体简体中文",            /* Simplified Chinese (macOS legacy) */
+      "Microsoft JhengHei", "微軟正黑體",               /* Traditional Chinese (Windows) */
+      "PingFang TC", "苹方-繁",                         /* Traditional Chinese (macOS) */
+      "Hiragino Sans CNS", "冬青黑体简体中文",          /* Traditional Chinese (macOS legacy) */
+      "Yu Gothic", "游ゴシック", "YuGothic",            /* Japanese (Windows 8.1+) */
+      "Hiragino Kaku Gothic ProN", "ヒラギノ角ゴ ProN W3", /* Japanese (macOS) */
+      "Meiryo", "メイリオ",                             /* Japanese (Windows legacy) */
+      "Malgun Gothic", "맑은 고딕",                     /* Korean (Windows) */
+      "Apple SD Gothic Neo",                           /* Korean (macOS) */
+      /* Indic languages */
+      "Noto Sans Devanagari", "Mangal",               /* Hindi, Sanskrit, Marathi */
+      "Noto Sans Tamil", "Latha",                     /* Tamil */
+      "Noto Sans Bengali", "Vrinda",                  /* Bengali */
+      "Noto Sans Gujarati", "Shruti",                 /* Gujarati */
+      "Noto Sans Telugu", "Gautami",                  /* Telugu */
+      "Noto Sans Kannada", "Tunga",                   /* Kannada */
+      "Noto Sans Malayalam", "Kartika",               /* Malayalam */
+      "Noto Sans Oriya", "Kalinga",                   /* Oriya */
+      "Noto Sans Gurmukhi", "Raavi",                  /* Punjabi */
+      /* Arabic and Hebrew */
+      "Noto Sans Arabic", "Tahoma", "Arial Unicode MS", /* Arabic */
+      "Noto Sans Hebrew", "David", "Miriam",          /* Hebrew */
+      /* Cyrillic */
+      "Noto Sans", "DejaVu Sans", "Liberation Sans",  /* Russian, Ukrainian, etc. */
+      /* Thai and Southeast Asian */
+      "Noto Sans Thai", "Tahoma",                     /* Thai */
+      "Noto Sans", "Khmer UI",                        /* Khmer */
+      /* Fallbacks */
+      sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji";
+    
+    /* Remove backgrounds but preserve colors for better print readability */
+    background: transparent !important;
+    
+    /* Remove shadows and effects for cleaner print */
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  /* Page setup with optimized margins */
+  @page {
+    margin-top: 1.5cm;
+    margin-right: 1.5cm;
+    margin-bottom: 1.5cm;
+    margin-left: 2cm;  /* Larger left margin for binding */
+    size: A4;
+  }
+
+  html, body {
+    background: transparent !important;
+    font-size: 12pt !important;
+    line-height: 1.4 !important;
+  }
+
+  /* ========== CONTAINER & LAYOUT OPTIMIZATION ========== */
+  .container {
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .container-inner {
+    border: none !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+  }
+
+  /* Remove footer for print */
+  .footer {
+    display: none !important;
+  }
+
+  /* ========== TYPOGRAPHY OPTIMIZATION ========== */
+  .markdown-body {
+    font-size: 12pt !important;
+    line-height: 1.4 !important;
+    background: transparent !important;
+  }
+
+  /* Headings optimization */
+  .markdown-body h1 {
+    font-size: 18pt !important;
+    font-weight: bold !important;
+    margin-top: 0 !important;
+    margin-bottom: 12pt !important;
+    page-break-after: avoid !important;
+    border-bottom: 2pt solid #333 !important;
+    padding-bottom: 6pt !important;
+  }
+
+  .markdown-body h2 {
+    font-size: 16pt !important;
+    font-weight: bold !important;
+    margin-top: 16pt !important;
+    margin-bottom: 8pt !important;
+    page-break-after: avoid !important;
+    border-bottom: 1pt solid #666 !important;
+    padding-bottom: 4pt !important;
+  }
+
+  .markdown-body h3 {
+    font-size: 14pt !important;
+    font-weight: bold !important;
+    margin-top: 12pt !important;
+    margin-bottom: 6pt !important;
+    page-break-after: avoid !important;
+  }
+
+  .markdown-body h4,
+  .markdown-body h5,
+  .markdown-body h6 {
+    font-size: 12pt !important;
+    font-weight: bold !important;
+    margin-top: 12pt !important;
+    margin-bottom: 6pt !important;
+    page-break-after: avoid !important;
+  }
+
+  /* Paragraph spacing */
+  .markdown-body p {
+    margin-top: 0 !important;
+    margin-bottom: 8pt !important;
+    orphans: 3 !important;
+    widows: 3 !important;
+  }
+
+  /* ========== LISTS OPTIMIZATION ========== */
+  .markdown-body ul,
+  .markdown-body ol {
+    margin-top: 0 !important;
+    margin-bottom: 8pt !important;
+    padding-left: 20pt !important;
+  }
+
+  .markdown-body li {
+    margin-bottom: 4pt !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* Task lists */
+  .markdown-body .task-list-item {
+    list-style: none !important;
+  }
+
+  .markdown-body .task-list-item-checkbox {
+    margin-right: 6pt !important;
+  }
+
+  /* ========== CODE BLOCKS OPTIMIZATION ========== */
+  .markdown-body code,
+  .markdown-body tt {
+    font-family: 
+      "Consolas", "Monaco", "Courier New", 
+      "DejaVu Sans Mono", "Liberation Mono", 
+      "Source Code Pro", "Fira Code",
+      monospace !important;
+    font-size: 10pt !important;
+    background: #f5f5f5 !important;
+    color: #000 !important;
+    border: 1pt solid #ddd !important;
+    border-radius: 2pt !important;
+    padding: 1pt 3pt !important;
+  }
+
+  .markdown-body pre {
+    font-family: 
+      "Consolas", "Monaco", "Courier New", 
+      "DejaVu Sans Mono", "Liberation Mono", 
+      "Source Code Pro", "Fira Code",
+      monospace !important;
+    font-size: 9pt !important;
+    line-height: 1.3 !important;
+    background: #f8f8f8 !important;
+    color: #000 !important;
+    border: 1pt solid #ccc !important;
+    border-radius: 3pt !important;
+    padding: 8pt !important;
+    overflow: visible !important;
+    white-space: pre-wrap !important;
+    page-break-inside: avoid !important;
+  }
+
+  .markdown-body pre code {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    font-size: inherit !important;
+  }
+
+  /* ========== TABLES OPTIMIZATION ========== */
+  .markdown-body table {
+    border-collapse: collapse !important;
+    width: 100% !important;
+    margin-bottom: 12pt !important;
+    page-break-inside: avoid !important;
+  }
+
+  .markdown-body th,
+  .markdown-body td {
+    border: 1pt solid #666 !important;
+    padding: 4pt 8pt !important;
+    text-align: left !important;
+    vertical-align: top !important;
+  }
+
+  .markdown-body th {
+    background: #f0f0f0 !important;
+    font-weight: bold !important;
+  }
+
+  .markdown-body tbody tr:nth-child(even) {
+    background: #f9f9f9 !important;
+  }
+
+  /* ========== BLOCKQUOTES & ALERTS ========== */
+  .markdown-body blockquote {
+    border-left: 3pt solid #666 !important;
+    margin: 8pt 0 !important;
+    padding: 0 0 0 12pt !important;
+    font-style: italic !important;
+    background: #f9f9f9 !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* Markdown alerts */
+  .markdown-body .markdown-alert {
+    border: 1pt solid #ccc !important;
+    border-radius: 3pt !important;
+    padding: 8pt !important;
+    margin: 8pt 0 !important;
+    page-break-inside: avoid !important;
+  }
+
+  .markdown-body .markdown-alert-note {
+    border-left: 3pt solid #0969da !important;
+    background: #f0f8ff !important;
+  }
+
+  .markdown-body .markdown-alert-tip {
+    border-left: 3pt solid #1a7f37 !important;
+    background: #f0fff0 !important;
+  }
+
+  .markdown-body .markdown-alert-important {
+    border-left: 3pt solid #8250df !important;
+    background: #faf0ff !important;
+  }
+
+  .markdown-body .markdown-alert-warning {
+    border-left: 3pt solid #9a6700 !important;
+    background: #fffbf0 !important;
+  }
+
+  .markdown-body .markdown-alert-caution {
+    border-left: 3pt solid #cf222e !important;
+    background: #fff0f0 !important;
+  }
+
+  /* ========== LINKS OPTIMIZATION ========== */
+  .markdown-body a {
+    text-decoration: underline !important;
+  }
+
+  /* Print URLs after links */
+  .markdown-body a[href]:after {
+    content: " (" attr(href) ")" !important;
+    font-size: 9pt !important;
+    color: #666 !important;
+    word-break: break-all !important;
+  }
+
+  /* Don't print URLs for relative links or anchors */
+  .markdown-body a[href^="#"]:after,
+  .markdown-body a[href^="/"]:after,
+  .markdown-body a[href*="javascript:"]:after {
+    content: "" !important;
+  }
+
+  /* ========== IMAGES OPTIMIZATION ========== */
+  .markdown-body img {
+    max-width: 100% !important;
+    height: auto !important;
+    page-break-inside: avoid !important;
+    border: 1pt solid #ddd !important;
+  }
+
+  /* Emoji should stay inline */
+  .markdown-body img.emoji {
+    border: none !important;
+    display: inline !important;
+    margin: 0 !important;
+  }
+
+  /* ========== NAVIGATION & UI ELEMENTS ========== */
+  /* Hide elements that don't make sense in print */
+  .anchor,
+  .octicon,
+  .task-list-item .handle,
+  [data-footnote-backref] {
+    display: none !important;
+  }
+
+  /* ========== PAGE BREAK CONTROL ========== */
+  .markdown-body h1,
+  .markdown-body h2 {
+    page-break-before: auto !important;
+    page-break-after: avoid !important;
+  }
+
+  .markdown-body h3,
+  .markdown-body h4,
+  .markdown-body h5,
+  .markdown-body h6 {
+    page-break-after: avoid !important;
+  }
+
+  .markdown-body pre,
+  .markdown-body blockquote,
+  .markdown-body table,
+  .markdown-body .markdown-alert {
+    page-break-inside: avoid !important;
+  }
+
+  /* Avoid orphans and widows */
+  .markdown-body p,
+  .markdown-body li {
+    orphans: 3 !important;
+    widows: 3 !important;
+  }
+
+  /* ========== MERMAID DIAGRAMS ========== */
+  /* Mermaid diagrams should be handled gracefully */
+  .mermaid {
+    page-break-inside: avoid !important;
+    border: 1pt solid #ddd !important;
+    padding: 8pt !important;
+    margin: 8pt 0 !important;
+  }
+
+  /* ========== UTILITY CLASSES ========== */
+  .print-break-before {
+    page-break-before: always !important;
+  }
+
+  .print-break-after {
+    page-break-after: always !important;
+  }
+
+  .print-no-break {
+    page-break-inside: avoid !important;
+  }
+
+  .print-hide {
+    display: none !important;
+  }
 }

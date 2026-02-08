@@ -17,6 +17,7 @@ var rootCmd = &cobra.Command{
 		host, _ := cmd.Flags().GetString("host")
 		port, _ := cmd.Flags().GetInt("port")
 		boundingBox, _ := cmd.Flags().GetBool("bounding-box")
+		noReload, _ := cmd.Flags().GetBool("no-reload")
 
 		var file string
 		if len(args) == 1 {
@@ -24,7 +25,7 @@ var rootCmd = &cobra.Command{
 		}
 
 		parser := pkg.NewParser(theme)
-		server := pkg.NewServer(host, port, theme, boundingBox, browser, parser)
+		server := pkg.NewServer(host, port, theme, boundingBox, browser, !noReload, parser)
 		return server.Serve(file)
 	},
 }
@@ -42,4 +43,5 @@ func init() {
 	rootCmd.Flags().StringP("host", "H", "localhost", "Host to use")
 	rootCmd.Flags().IntP("port", "p", 6419, "Port to use")
 	rootCmd.Flags().Bool("bounding-box", true, "Add bounding box to HTML")
+	rootCmd.Flags().Bool("no-reload", false, "Disable automatic browser reload on file changes")
 }

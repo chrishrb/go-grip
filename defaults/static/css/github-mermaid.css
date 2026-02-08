@@ -1,0 +1,20 @@
+/* Mermaid error and utility styles */
+.mermaid-error {
+  background: #fff0f0;
+  color: #cf222e;
+  border: 1px solid #cf222e;
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin: 8px 0;
+  white-space: pre-wrap;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: 12px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .mermaid-error {
+    background: #2a1616;
+    color: #ff7b72;
+    border-color: #da3633;
+  }
+}
