@@ -19,12 +19,12 @@ import (
 )
 
 type Server struct {
-	parser      *Parser
-	theme       string
-	boundingBox bool
-	host        string
-	port        int
-	browser     bool
+	parser       *Parser
+	theme        string
+	boundingBox  bool
+	host         string
+	port         int
+	browser      bool
 	enableReload bool
 }
 
