@@ -112,7 +112,6 @@ To terminate the current server simply press `CTRL-C`.
 
 - [ ] Add github mermaid support
 - [ ] Add additonal github emojis
-- [ ] Fix TODO lists (no dots before)
 - [ ] Make it possible to export the generated html
 - [ ] Make code block work
 

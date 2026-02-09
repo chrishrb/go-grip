@@ -35,6 +35,7 @@ func (r *HTMLRenderer) renderAlert(w util.BufWriter, source []byte, node ast.Nod
 	if entering {
 		alert := node.(*Alert)
 		_, _ = fmt.Fprintf(w, `<div class="markdown-alert markdown-alert-%s">`, alert.AlertType)
+		_, _ = w.WriteString("\n")
 		_, _ = fmt.Fprintf(w, `<p class="markdown-alert-title">%s</p>`, getAlertTitle(alert.AlertType))
 		_, _ = w.WriteString("\n")
 	} else {
