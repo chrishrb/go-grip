@@ -123,7 +123,7 @@ func (r *TaskListHTMLRenderer) RegisterFuncs(reg renderer.NodeRendererFuncRegist
 func (r *TaskListHTMLRenderer) renderList(
 	w util.BufWriter, source []byte, node gast.Node, entering bool) (gast.WalkStatus, error) {
 	n := node.(*gast.List)
-	
+
 	// Check if this is a task list
 	isTaskList := false
 	for child := node.FirstChild(); child != nil; child = child.NextSibling() {
@@ -147,7 +147,7 @@ func (r *TaskListHTMLRenderer) renderList(
 			}
 		}
 	}
-	
+
 	if entering {
 		// Render the opening tag manually
 		tag := "ul"
@@ -156,11 +156,11 @@ func (r *TaskListHTMLRenderer) renderList(
 		}
 		_, _ = w.WriteString("<")
 		_, _ = w.WriteString(tag)
-		
+
 		if isTaskList {
 			_, _ = w.WriteString(` class="contains-task-list"`)
 		}
-		
+
 		if n.Attributes() != nil {
 			html.RenderAttributes(w, n, html.ListAttributeFilter)
 		}
@@ -196,14 +196,14 @@ func (r *TaskListHTMLRenderer) renderListItem(
 		return false
 	}
 	isTaskItem = checkForTaskCheckBox(node)
-	
+
 	if entering {
 		_, _ = w.WriteString("<li")
-		
+
 		if isTaskItem {
 			_, _ = w.WriteString(` class="task-list-item"`)
 		}
-		
+
 		if node.Attributes() != nil {
 			html.RenderAttributes(w, node, html.ListItemAttributeFilter)
 		}
@@ -230,4 +230,3 @@ func (e *taskList) Extend(m goldmark.Markdown) {
 		util.Prioritized(NewTaskListHTMLRenderer(), 501),
 	))
 }
-

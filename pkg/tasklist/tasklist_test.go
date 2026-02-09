@@ -83,7 +83,7 @@ func TestTaskListRendering(t *testing.T) {
 			got := buf.String()
 			t.Logf("Got:\n%s", got)
 			t.Logf("Want:\n%s", tt.want)
-			
+
 			assert.Equal(t, tt.want, got)
 		})
 	}

@@ -39,11 +39,11 @@ func (t *Transformer) Transform(node *ast.Document, reader text.Reader, pc parse
 		}
 
 		paragraph := firstChild.(*ast.Paragraph)
-		
+
 		// Collect all text from the first line (may be split across multiple nodes)
 		var firstLineText strings.Builder
 		var textNodes []*ast.Text
-		
+
 		for child := paragraph.FirstChild(); child != nil; child = child.NextSibling() {
 			if textNode, ok := child.(*ast.Text); ok {
 				firstLineText.Write(textNode.Segment.Value(source))
@@ -57,11 +57,11 @@ func (t *Transformer) Transform(node *ast.Document, reader text.Reader, pc parse
 				break
 			}
 		}
-		
+
 		if len(textNodes) == 0 {
 			return ast.WalkContinue, nil
 		}
-		
+
 		firstText := firstLineText.String()
 		matches := alertRegex.FindStringSubmatch(firstText)
 		if matches == nil {
@@ -97,11 +97,11 @@ func (t *Transformer) Transform(node *ast.Document, reader text.Reader, pc parse
 		firstChild := blockquote.FirstChild()
 		if firstChild != nil && firstChild.Kind() == ast.KindParagraph {
 			paragraph := firstChild.(*ast.Paragraph)
-			
+
 			// Collect all text nodes from the first line
 			var textNodes []*ast.Text
 			var combinedText strings.Builder
-			
+
 			for child := paragraph.FirstChild(); child != nil; child = child.NextSibling() {
 				if textNode, ok := child.(*ast.Text); ok {
 					combinedText.Write(textNode.Segment.Value(source))
@@ -113,18 +113,18 @@ func (t *Transformer) Transform(node *ast.Document, reader text.Reader, pc parse
 					break
 				}
 			}
-			
+
 			// Find where the marker ends in the combined text
 			markerMatch := alertRegex.FindStringIndex(combinedText.String())
 			if markerMatch != nil {
 				markerEndPos := markerMatch[1]
-				
+
 				// Now figure out which nodes to remove/modify
 				var currentPos int
 				for _, textNode := range textNodes {
 					nodeLen := len(textNode.Segment.Value(source))
 					nodeEndPos := currentPos + nodeLen
-					
+
 					if markerEndPos <= currentPos {
 						// This node is after the marker, keep it
 						break
@@ -143,11 +143,11 @@ func (t *Transformer) Transform(node *ast.Document, reader text.Reader, pc parse
 						}
 						break
 					}
-					
+
 					currentPos = nodeEndPos
 				}
 			}
-			
+
 			// If paragraph is now empty, remove it
 			if paragraph.ChildCount() == 0 {
 				blockquote.RemoveChild(blockquote, paragraph)
