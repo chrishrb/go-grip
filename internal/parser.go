@@ -4,6 +4,7 @@ import (
 	"bytes"
 
 	"github.com/chrishrb/go-grip/pkg/alert"
+	"github.com/chrishrb/go-grip/pkg/tasklist"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark-emoji"
 	"github.com/yuin/goldmark/extension"
@@ -25,7 +26,10 @@ func NewParser(theme string) *Parser {
 func (m Parser) MdToHTML(input []byte) ([]byte, error) {
 	md := goldmark.New(
 		goldmark.WithExtensions(
-			extension.GFM,
+			extension.Linkify,
+			extension.Table,
+			extension.Strikethrough,
+			tasklist.TaskList,
 			emoji.Emoji,
 			&hashtag.Extender{},
 			alert.New(),

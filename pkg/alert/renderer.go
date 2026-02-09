@@ -32,7 +32,6 @@ func (r *HTMLRenderer) RegisterFuncs(reg renderer.NodeRendererFuncRegisterer) {
 
 // renderAlert renders an Alert node to HTML
 func (r *HTMLRenderer) renderAlert(w util.BufWriter, source []byte, node ast.Node, entering bool) (ast.WalkStatus, error) {
-	fmt.Println("hello")
 	if entering {
 		alert := node.(*Alert)
 		_, _ = fmt.Fprintf(w, `<div class="markdown-alert markdown-alert-%s">`, alert.AlertType)
