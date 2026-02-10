@@ -35,7 +35,7 @@ This project is a reimplementation of the original Python-based [grip](https://g
 - 📱 Dark and light theme
 - 🎨 Syntax highlighting for code
 - [x] Todo list like the one on GitHub
-- Support for github markdown emojis :+1: :bowtie:
+- Support for github markdown emojis :+1:
 - Support for mermaid diagrams
 - hashtag linking in page (see table of contents)
 
@@ -45,6 +45,16 @@ graph TD;
     A-->C;
     B-->D;
     C-->D;
+```
+
+```go
+package main
+
+import "github.com/chrishrb/go-grip/cmd"
+
+func main() {
+	fmt.Sprintln("Welcome to Grip! Use `go-grip --help` for more information.")
+}
 ```
 
 > [!TIP]
@@ -111,9 +121,7 @@ To terminate the current server simply press `CTRL-C`.
 ## :bug: Known TODOs / Bugs
 
 - [ ] Add github mermaid support
-- [ ] Add additonal github emojis
 - [ ] Make it possible to export the generated html
-- [ ] Make code block work
 
 ## :pushpin: Similar tools
 

@@ -1,0 +1,207 @@
+/* GitHub Clipboard Button - Exact Match */
+
+/* Button base styling */
+clipboard-copy {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  margin: 8px;
+  color: #4493f8;
+  background-color: transparent;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+/* Hover state */
+clipboard-copy:hover {
+  background-color: rgba(175, 184, 193, 0.2);
+}
+
+/* Active state */
+clipboard-copy:active {
+  background-color: rgba(175, 184, 193, 0.3);
+}
+
+/* Focus state */
+clipboard-copy:focus {
+  outline: 2px solid #0969da;
+  outline-offset: -2px;
+}
+
+clipboard-copy:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Icons */
+.octicon {
+  display: inline-block;
+  fill: currentColor;
+  vertical-align: text-bottom;
+}
+
+.octicon-copy,
+.octicon-check {
+  width: 16px;
+  height: 16px;
+}
+
+/* Copy icon - visible by default, GRAY not blue */
+.js-clipboard-copy-icon,
+.octicon-copy {
+  display: block;
+  fill: #9198a1 !important; /* Gray color from GitHub */
+  color: #9198a1 !important;
+}
+
+/* Check icon - hidden by default, GREEN */
+.js-clipboard-check-icon,
+.octicon-check {
+  display: none;
+  fill: #3fb950 !important; /* Green color from GitHub */
+  color: #3fb950 !important;
+}
+
+/* Success state - hide copy icon, show check icon */
+.ClipboardButton--success .js-clipboard-copy-icon,
+.ClipboardButton--success .octicon-copy {
+  display: none !important;
+}
+
+.ClipboardButton--success .js-clipboard-check-icon,
+.ClipboardButton--success .octicon-check {
+  display: block !important;
+}
+
+/* GitHub Tooltip System */
+.tooltipped {
+  position: relative;
+}
+
+.tooltipped::after {
+  position: absolute;
+  z-index: 1000000;
+  display: none;
+  padding: 4px 8px;
+  font-size: 12px;
+  font-family: -apple-system, "system-ui", "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  line-height: 1.5;
+  color: #ffffff; /* White text */
+  text-align: center;
+  white-space: pre;
+  background: #3d444d; /* Dark gray background - GitHub's exact color */
+  border-radius: 6px;
+  opacity: 0;
+  pointer-events: none;
+  content: attr(aria-label);
+}
+
+/* Show tooltip on hover/active/focus */
+.tooltipped:hover::after,
+.tooltipped:active::after,
+.tooltipped:focus::after {
+  display: inline-block;
+  animation: tooltip-appear 0.1s ease-in forwards;
+}
+
+@keyframes tooltip-appear {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Tooltip direction: west (left side) */
+.tooltipped-w::after {
+  right: 100%;
+  bottom: 50%;
+  margin-right: 6px;
+  transform: translateY(50%);
+}
+
+/* Tooltip direction: south (bottom) */
+.tooltipped-s::after {
+  top: 100%;
+  right: 50%;
+  margin-top: 6px;
+  transform: translateX(50%);
+}
+
+/* Tooltip direction: north (top) */
+.tooltipped-n::after {
+  bottom: 100%;
+  right: 50%;
+  margin-bottom: 6px;
+  transform: translateX(50%);
+}
+
+/* Tooltip direction: east (right side) */
+.tooltipped-e::after {
+  left: 100%;
+  bottom: 50%;
+  margin-left: 6px;
+  transform: translateY(50%);
+}
+
+/* Container */
+.zeroclipboard-container {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: block;
+}
+
+.highlight,
+.snippet-clipboard-content {
+  position: relative;
+}
+
+/* Utility classes */
+.d-none { display: none !important; }
+.d-flex { display: flex !important; }
+.m-2 { margin: 8px !important; }
+.p-0 { padding: 0 !important; }
+.flex-justify-center { justify-content: center !important; }
+.flex-items-center { align-items: center !important; }
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  clipboard-copy {
+    color: #58a6ff;
+  }
+  
+  clipboard-copy:hover {
+    background-color: rgba(110, 118, 129, 0.4);
+  }
+  
+  clipboard-copy:active {
+    background-color: rgba(110, 118, 129, 0.5);
+  }
+  
+  .js-clipboard-copy-icon,
+  .octicon-copy {
+    fill: #8b949e !important;
+    color: #8b949e !important;
+  }
+  
+  .js-clipboard-check-icon,
+  .octicon-check {
+    fill: #3fb950 !important;
+    color: #3fb950 !important;
+  }
+}
+
+/* Print */
+@media print {
+  clipboard-copy,
+  .zeroclipboard-container {
+    display: none !important;
+  }
+}

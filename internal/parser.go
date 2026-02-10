@@ -4,6 +4,7 @@ import (
 	"bytes"
 
 	"github.com/chrishrb/go-grip/pkg/alert"
+	"github.com/chrishrb/go-grip/pkg/highlighting"
 	"github.com/chrishrb/go-grip/pkg/tasklist"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark-emoji"
@@ -33,6 +34,7 @@ func (m Parser) MdToHTML(input []byte) ([]byte, error) {
 			emoji.Emoji,
 			&hashtag.Extender{},
 			alert.New(),
+			highlighting.Highlighting,
 		),
 		goldmark.WithParserOptions(
 			parser.WithAutoHeadingID(),
