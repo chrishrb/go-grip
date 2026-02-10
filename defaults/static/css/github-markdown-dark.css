@@ -78,7 +78,8 @@
 .markdown-body a {
   background-color: transparent;
   color: #4493f8;
-  text-decoration: none;
+  text-decoration: underline;
+  text-underline-offset: .2rem;
 }
 
 .markdown-body abbr[title] {
