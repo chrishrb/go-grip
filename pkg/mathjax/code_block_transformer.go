@@ -18,7 +18,7 @@ func NewMathCodeBlockTransformer() parser.ASTTransformer {
 }
 
 func (t *mathCodeBlockTransformer) Transform(node *ast.Document, reader text.Reader, pc parser.Context) {
-	ast.Walk(node, func(n ast.Node, entering bool) (ast.WalkStatus, error) {
+	_ = ast.Walk(node, func(n ast.Node, entering bool) (ast.WalkStatus, error) {
 		if !entering {
 			return ast.WalkContinue, nil
 		}
@@ -27,7 +27,7 @@ func (t *mathCodeBlockTransformer) Transform(node *ast.Document, reader text.Rea
 		if codeBlock, ok := n.(*ast.FencedCodeBlock); ok {
 			// Check if the language is "math"
 			if codeBlock.Info != nil {
-				language := codeBlock.Info.Text(reader.Source())
+				language := codeBlock.Info.Value(reader.Source())
 				if bytes.Equal(language, []byte("math")) {
 					// Convert to MathBlock
 					mathBlock := NewMathBlock()

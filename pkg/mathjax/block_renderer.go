@@ -25,7 +25,7 @@ func (r *MathBlockRenderer) writeLines(w util.BufWriter, source []byte, n gast.N
 	for i := range l {
 		line := n.Lines().At(i)
 		lineBytes := line.Value(source)
-		w.Write(lineBytes)
+		_, _ = w.Write(lineBytes)
 		if len(lineBytes) > 0 && lineBytes[len(lineBytes)-1] == '\n' {
 			endsWithNewline = true
 		} else {

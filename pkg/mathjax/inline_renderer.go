@@ -20,12 +20,12 @@ func (r *InlineMathRenderer) renderInlineMath(w util.BufWriter, source []byte, n
 			segment := c.(*ast.Text).Segment
 			value := segment.Value(source)
 			if bytes.HasSuffix(value, []byte("\n")) {
-				w.Write(value[:len(value)-1])
+				_, _ = w.Write(value[:len(value)-1])
 				if c != n.LastChild() {
-					w.Write([]byte(" "))
+					_, _ = w.Write([]byte(" "))
 				}
 			} else {
-				w.Write(value)
+				_, _ = w.Write(value)
 			}
 		}
 		return ast.WalkSkipChildren, nil

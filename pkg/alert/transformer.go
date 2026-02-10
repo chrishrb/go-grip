@@ -23,7 +23,7 @@ func (t *Transformer) Transform(node *ast.Document, reader text.Reader, pc parse
 	}
 
 	// First pass: identify blockquotes to transform
-	ast.Walk(node, func(n ast.Node, entering bool) (ast.WalkStatus, error) {
+	_ = ast.Walk(node, func(n ast.Node, entering bool) (ast.WalkStatus, error) {
 		if !entering {
 			return ast.WalkContinue, nil
 		}
