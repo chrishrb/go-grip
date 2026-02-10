@@ -38,6 +38,15 @@ This project is a reimplementation of the original Python-based [grip](https://g
 - Support for github markdown emojis :+1:
 - Support for mermaid diagrams
 - hashtag linking in page (see table of contents)
+- math expressions (code, inline, block)
+
+This is an inline $\sqrt{3x-1}+(1+x)^2$ function.
+
+$$\left( \sum_{k=1}^n a_k b_k \right)^2 \leq \left( \sum_{k=1}^n a_k^2 \right) \left( \sum_{k=1}^n b_k^2 \right)$$
+
+```math
+\left( \sum_{k=1}^n a_k b_k \right)^2 \leq \left( \sum_{k=1}^n a_k^2 \right) \left( \sum_{k=1}^n b_k^2 \right)
+```
 
 ```mermaid
 graph TD;
