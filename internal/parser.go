@@ -4,6 +4,7 @@ import (
 	"bytes"
 
 	"github.com/chrishrb/go-grip/pkg/alert"
+	"github.com/chrishrb/go-grip/pkg/footnote"
 	"github.com/chrishrb/go-grip/pkg/highlighting"
 	"github.com/chrishrb/go-grip/pkg/mathjax"
 	"github.com/chrishrb/go-grip/pkg/tasklist"
@@ -32,6 +33,7 @@ func (m Parser) MdToHTML(input []byte) ([]byte, error) {
 			extension.Linkify,
 			extension.Table,
 			extension.Strikethrough,
+			footnote.Footnote,
 			tasklist.TaskList,
 			emoji.Emoji,
 			&hashtag.Extender{},
