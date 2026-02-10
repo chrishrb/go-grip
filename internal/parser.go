@@ -5,6 +5,7 @@ import (
 
 	"github.com/chrishrb/go-grip/pkg/alert"
 	"github.com/chrishrb/go-grip/pkg/highlighting"
+	"github.com/chrishrb/go-grip/pkg/mathjax"
 	"github.com/chrishrb/go-grip/pkg/tasklist"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark-emoji"
@@ -37,6 +38,7 @@ func (m Parser) MdToHTML(input []byte) ([]byte, error) {
 			alert.New(),
 			highlighting.Highlighting,
 			&mermaid.Extender{RenderMode: mermaid.RenderModeClient},
+			mathjax.MathJax,
 		),
 		goldmark.WithParserOptions(
 			parser.WithAutoHeadingID(),

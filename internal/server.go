@@ -73,6 +73,7 @@ func (s *Server) Serve(file string) error {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		f, err := dir.Open(r.URL.Path)
 		if err == nil {
+			//nolint:errcheck
 			defer f.Close()
 		}
 
@@ -112,6 +113,7 @@ func (s *Server) Serve(file string) error {
 		readme := "README.md"
 		f, err := dir.Open(readme)
 		if err == nil {
+			//nolint:errcheck
 			defer f.Close()
 		}
 		if err == nil {
@@ -145,6 +147,7 @@ func readToString(dir http.Dir, filename string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+	//nolint:errcheck
 	defer f.Close()
 
 	var buf bytes.Buffer

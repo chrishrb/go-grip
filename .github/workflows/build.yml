@@ -7,30 +7,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Set up Go
-      uses: actions/setup-go@v5
-      with:
-        go-version: 1.23
+      - uses: jdx/mise-action@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Build
-      run: make build
+      - name: Build
+        run: mise run build
 
-    - name: Run tests
-      run: make test
+      - name: Run tests
+        run: mise run test
 
-    - name: Format
-      run: |
-        DIFF="$(gofmt -d .)"
-        if [[ -n $DIFF ]]; then
-          echo "$DIFF"
-          echo "please run gofmt"
-          exit 1
-        fi
+      - name: Format
+        run: |
+          DIFF="$(gofmt -d .)"
+          if [[ -n $DIFF ]]; then
+            echo "$DIFF"
+            echo "please run gofmt"
+            exit 1
+          fi
 
-    - name: golangci-lint
-      uses: golangci/golangci-lint-action@v6
-      with:
-        version: v1.60
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v8
+        with:
+          install-mode: none

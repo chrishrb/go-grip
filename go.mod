@@ -6,6 +6,7 @@ require (
 	github.com/aarol/reload v1.2.0
 	github.com/alecthomas/chroma/v2 v2.14.0
 	github.com/spf13/cobra v1.8.1
+	github.com/stretchr/testify v1.11.1
 )
 
 require (
@@ -13,7 +14,6 @@ require (
 	github.com/forPelevin/gomoji v1.3.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
-	github.com/stretchr/testify v1.11.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 

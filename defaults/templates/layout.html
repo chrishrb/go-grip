@@ -28,6 +28,10 @@
     <link rel="stylesheet" href="/static/css/github-print.css" media="print" />
     <link rel="stylesheet" href="/static/css/github-mermaid.css" />
     <link rel="stylesheet" href="/static/css/github-clipboard.css" />
+    <link rel="stylesheet" href="/static/css/mathjax.css" />
+    <script src="/static/js/clipboard-copy.js"></script>
+    <script src="/static/js/mathjax-options.js"></script>
+    <script src="/static/js/tex-mml-chtml.js"></script>
   </head>
 
   <body class="markdown-body" data-theme="{{ .Theme }}">
@@ -39,6 +43,5 @@
     {{if .BoundingBox}}
     <footer class="container footer">Made with &hearts; by chrishrb</footer>
     {{end}}
-    <script src="/static/js/clipboard-copy.js"></script>
   </body>
 </html>
