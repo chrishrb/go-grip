@@ -5,6 +5,7 @@ import (
 
 	"github.com/chrishrb/go-grip/pkg/alert"
 	"github.com/chrishrb/go-grip/pkg/footnote"
+	"github.com/chrishrb/go-grip/pkg/ghissue"
 	"github.com/chrishrb/go-grip/pkg/highlighting"
 	"github.com/chrishrb/go-grip/pkg/mathjax"
 	"github.com/chrishrb/go-grip/pkg/tasklist"
@@ -41,6 +42,7 @@ func (m Parser) MdToHTML(input []byte) ([]byte, error) {
 			highlighting.Highlighting,
 			&mermaid.Extender{RenderMode: mermaid.RenderModeClient},
 			mathjax.MathJax,
+			ghissue.New(),
 		),
 		goldmark.WithParserOptions(
 			parser.WithAutoHeadingID(),
