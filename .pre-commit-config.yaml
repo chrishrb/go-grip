@@ -1,0 +1,20 @@
+repos:
+  - repo: https://github.com/google/yamlfmt
+    rev: v0.17.2
+    hooks:
+      - id: yamlfmt
+  - repo: local
+    hooks:
+      - id: lint
+        name: lint
+        entry: golangci-lint run --fix
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: format
+        name: format
+        entry: gofmt -w
+        files: \.(go)$
+        language: system
+        pass_filenames: true
+        always_run: false

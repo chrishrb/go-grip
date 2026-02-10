@@ -1,0 +1,57 @@
+[tools]
+go = "1.25"
+golangci-lint = "2.7"
+prek = "latest"
+
+[tasks.all]
+description = "Format, lint and build"
+depends = ["init", "vendor", "build", "format", "lint"]
+
+[tasks.init]
+description = "Initialize the project"
+run = "pre-commit install"
+
+[tasks.run]
+description = "Run"
+run = "go run -tags debug main.go"
+# To pass extra args: `mise run run -- <args>`
+
+[tasks.emojiscraper]
+description = "Run emojiscraper"
+run = "go run -tags debug main.go emojiscraper defaults/static/emojis pkg/emoji_map.go"
+
+[tasks.build]
+description = "Build"
+run = "go build -tags debug -o bin/go-grip main.go"
+
+[tasks.vendor]
+description = "Vendor"
+run = "go mod vendor"
+
+[tasks.test]
+description = "Test"
+run = "go test ./..."
+
+[tasks.compile]
+description = "Compile for every OS and Platform"
+shell = '''
+echo "Compiling for every OS and Platform"
+GOOS=darwin GOARCH=amd64 go build -o bin/go-grip-darwin-amd64 main.go
+GOOS=darwin GOARCH=arm64 go build -o bin/go-grip-darwin-arm64 main.go
+GOOS=linux GOARCH=amd64 go build -o bin/go-grip-linux-amd64 main.go
+GOOS=linux GOARCH=arm64 go build -o bin/go-grip-linux-arm64 main.go
+GOOS=windows GOARCH=amd64 go build -o bin/go-grip-windows-amd64.exe main.go
+GOOS=windows GOARCH=arm64 go build -o bin/go-grip-windows-arm64.exe main.go
+'''
+
+[tasks.format]
+description = "Format code"
+run = "go fmt ./..."
+
+[tasks.lint]
+description = "Run linter"
+run = "golangci-lint run"
+
+[tasks.clean]
+description = "Cleanup build dir"
+run = "rm -r bin/"
