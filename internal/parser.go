@@ -12,6 +12,7 @@ import (
 	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/renderer/html"
 	"go.abhg.dev/goldmark/hashtag"
+	"go.abhg.dev/goldmark/mermaid"
 )
 
 type Parser struct {
@@ -35,6 +36,7 @@ func (m Parser) MdToHTML(input []byte) ([]byte, error) {
 			&hashtag.Extender{},
 			alert.New(),
 			highlighting.Highlighting,
+			&mermaid.Extender{RenderMode: mermaid.RenderModeClient},
 		),
 		goldmark.WithParserOptions(
 			parser.WithAutoHeadingID(),

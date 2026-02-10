@@ -120,7 +120,7 @@ To terminate the current server simply press `CTRL-C`.
 
 ## :bug: Known TODOs / Bugs
 
-- [ ] Add github mermaid support
+- [ ] Maybe use githubs original mermaid renderer with zoom option etc. (https://viewscreen.githubusercontent.com/markdown/mermaid?docs_host=https%3A%2F%2Fdocs.github.com&color_mode=dark#a5f40142-95a0-45db-8a9a-e1fb39a6488b)
 - [ ] Make it possible to export the generated html
 
 ## :pushpin: Similar tools
