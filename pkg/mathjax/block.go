@@ -37,7 +37,7 @@ func (b *mathJaxBlockParser) Open(parent ast.Node, reader text.Reader, pc parser
 	if i-pos < 2 {
 		return nil, parser.NoChildren
 	}
-	
+
 	// Check if this is a one-liner like $$content$$
 	if i < len(line) {
 		// Find the closing $$
@@ -56,7 +56,7 @@ func (b *mathJaxBlockParser) Open(parent ast.Node, reader text.Reader, pc parser
 			j++
 		}
 	}
-	
+
 	pc.Set(mathBlockInfoKey, &mathBlockData{indent: pos})
 	node := NewMathBlock()
 	return node, parser.NoChildren

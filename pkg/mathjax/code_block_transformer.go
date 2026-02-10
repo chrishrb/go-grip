@@ -31,13 +31,13 @@ func (t *mathCodeBlockTransformer) Transform(node *ast.Document, reader text.Rea
 				if bytes.Equal(language, []byte("math")) {
 					// Convert to MathBlock
 					mathBlock := NewMathBlock()
-					
+
 					// Copy all lines from the code block to the math block
 					for i := 0; i < codeBlock.Lines().Len(); i++ {
 						line := codeBlock.Lines().At(i)
 						mathBlock.Lines().Append(line)
 					}
-					
+
 					// Replace the code block with the math block
 					parent := n.Parent()
 					if parent != nil {
