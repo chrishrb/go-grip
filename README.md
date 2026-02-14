@@ -40,6 +40,7 @@ This project is a reimplementation of the original Python-based [grip](https://g
 - hashtag linking in page (see table of contents)
 - math expressions (code, inline, block)
 - gh issues and prs #46 and grafana/grafana#22
+- toggle state is preserved in [sessionStorage](https://developer.mozilla.org/en-US/docs/Web/API/Window/sessionStorage)
 
 This is an inline $\sqrt{3x-1}+(1+x)^2$ function.
 
