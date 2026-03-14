@@ -5,36 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>go-grip - markdown preview</title>
     <link rel="icon" type="image/x-icon" href="/static/images/favicon.ico" />
-    {{if eq .Theme "dark" }}
-    <link rel="stylesheet" href="/static/css/github-markdown-dark.css" />
-    <style>{{ .CssCodeDark }}</style>
-    {{else if eq .Theme "light" }}
-    <link rel="stylesheet" href="/static/css/github-markdown-light.css" />
-    <style>{{ .CssCodeLight }}</style>
-    {{else}}
     <link
+      id="theme-light"
       rel="stylesheet"
       href="/static/css/github-markdown-light.css"
       media="(prefers-color-scheme: light)"
     />
     <link
+      id="theme-dark"
       rel="stylesheet"
       href="/static/css/github-markdown-dark.css"
       media="(prefers-color-scheme: dark)"
     />
-    <style media="(prefers-color-scheme: light)">{{ .CssCodeLight }}</style>
-    <style media="(prefers-color-scheme: dark)">{{ .CssCodeDark }}</style>
-    {{end}}
+    <style id="highlight-light" media="(prefers-color-scheme: light)">{{ .CssCodeLight }}</style>
+    <style id="highlight-dark" media="(prefers-color-scheme: dark)">{{ .CssCodeDark }}</style>
     <link rel="stylesheet" href="/static/css/github-print.css" media="print" />
     <link rel="stylesheet" href="/static/css/github-mermaid.css" />
     <link rel="stylesheet" href="/static/css/github-clipboard.css" />
     <link rel="stylesheet" href="/static/css/mathjax.css" />
+    <link rel="stylesheet" href="/static/css/theme-switch.css" />
+    <script src="/static/js/theme-switch.js"></script>
     <script src="/static/js/clipboard-copy.js"></script>
     <script src="/static/js/mathjax-options.js"></script>
     <script src="/static/js/tex-mml-chtml.js"></script>
   </head>
 
-  <body class="markdown-body" data-theme="{{ .Theme }}">
+  <body class="markdown-body">
+    <button id="theme-toggle" class="theme-toggle" title="Toggle theme">
+      <span class="theme-toggle-icon"></span>
+    </button>
     <div class="container">
       <div {{if .BoundingBox }} class="container-inner" {{end}}>
         {{ .Content }}

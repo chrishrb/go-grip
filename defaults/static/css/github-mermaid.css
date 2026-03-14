@@ -18,3 +18,9 @@
     border-color: #da3633;
   }
 }
+
+[data-theme="dark"] .mermaid-error {
+  background: #2a1616;
+  color: #ff7b72;
+  border-color: #da3633;
+}
