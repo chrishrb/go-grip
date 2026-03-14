@@ -1,6 +1,8 @@
 package mermaid
 
 import (
+	"fmt"
+
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/renderer"
@@ -29,14 +31,17 @@ type mermaid struct {
 	Theme string
 }
 
-func NewMermaid() *mermaid {
-	return &mermaid{}
+func NewMermaid(theme string) *mermaid {
+	return &mermaid{
+		Theme: theme,
+	}
 }
 
 // Extend extends the provided Goldmark parser with support for Mermaid
 // diagrams.
 func (e *mermaid) Extend(md goldmark.Markdown) {
 	var themeVariables themeVariables
+	fmt.Printf("mermaid theme: %s\n", e.Theme)
 	if e.Theme == "dark" {
 		themeVariables = darkThemeVariables
 	} else {

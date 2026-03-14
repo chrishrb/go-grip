@@ -37,7 +37,7 @@ func (m Parser) MdToHTML(input []byte) ([]byte, error) {
 			&hashtag.Extender{},
 			alert.New(),
 			highlighting.Highlighting,
-			mermaid.NewMermaid(),
+			mermaid.NewMermaid(m.theme),
 			mathjax.MathJax,
 			ghissue.New(),
 			details.New(),
