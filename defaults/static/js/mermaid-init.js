@@ -60,47 +60,39 @@
     return btn;
   }
 
-  function attachZoomPan(viewport, svg) {
+  var ZOOM_STEP = 0.2;
+  var PAN_STEP = 50;
+  var MIN_ZOOM = 0.1;
+  var MAX_ZOOM = 10;
+
+  function initZoomPanState(viewport, svg) {
     svg.style.transformOrigin = '0 0';
 
-    var scale = 1, panX = 0, panY = 0;
-    var ZOOM_STEP = 0.2;
-    var PAN_STEP = 50;
-    var MIN_ZOOM = 0.1;
-    var MAX_ZOOM = 10;
+    var state = { scale: 1, panX: 0, panY: 0 };
 
     function apply() {
-      svg.style.transform = 'translate(' + panX + 'px,' + panY + 'px) scale(' + scale + ')';
+      svg.style.transform = 'translate(' + state.panX + 'px,' + state.panY + 'px) scale(' + state.scale + ')';
     }
 
     function zoomAt(newScale, cx, cy) {
       newScale = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, newScale));
-      var ratio = newScale / scale;
-      panX = cx - (cx - panX) * ratio;
-      panY = cy - (cy - panY) * ratio;
-      scale = newScale;
+      var ratio = newScale / state.scale;
+      state.panX = cx - (cx - state.panX) * ratio;
+      state.panY = cy - (cy - state.panY) * ratio;
+      state.scale = newScale;
       apply();
     }
 
     function zoomCenter(delta) {
-      zoomAt(scale + delta, viewport.clientWidth / 2, viewport.clientHeight / 2);
+      zoomAt(state.scale + delta, viewport.clientWidth / 2, viewport.clientHeight / 2);
     }
-
-    var buttons = [];
-    buttons.push(createBtn('&#x2212;', 'Zoom out', function() { zoomCenter(-ZOOM_STEP); }));
-    buttons.push(createBtn('&#x2b;', 'Zoom in', function() { zoomCenter(ZOOM_STEP); }));
-    buttons.push(createBtn('&#x2190;', 'Pan left', function() { panX += PAN_STEP; apply(); }));
-    buttons.push(createBtn('&#x2192;', 'Pan right', function() { panX -= PAN_STEP; apply(); }));
-    buttons.push(createBtn('&#x2191;', 'Pan up', function() { panY += PAN_STEP; apply(); }));
-    buttons.push(createBtn('&#x2193;', 'Pan down', function() { panY -= PAN_STEP; apply(); }));
-    buttons.push(createBtn('&#x21bb;', 'Reset', function() { scale = 1; panX = 0; panY = 0; apply(); }));
 
     // Wheel zoom at cursor position
     viewport.addEventListener('wheel', function(e) {
       e.preventDefault();
       var rect = viewport.getBoundingClientRect();
       var delta = e.deltaY < 0 ? ZOOM_STEP : -ZOOM_STEP;
-      zoomAt(scale + delta, e.clientX - rect.left, e.clientY - rect.top);
+      zoomAt(state.scale + delta, e.clientX - rect.left, e.clientY - rect.top);
     }, { passive: false });
 
     // Drag to pan
@@ -115,8 +107,8 @@
     });
     viewport.addEventListener('pointermove', function(e) {
       if (!dragging) return;
-      panX += e.clientX - lastX;
-      panY += e.clientY - lastY;
+      state.panX += e.clientX - lastX;
+      state.panY += e.clientY - lastY;
       lastX = e.clientX;
       lastY = e.clientY;
       apply();
@@ -128,49 +120,87 @@
       viewport.classList.remove('dragging');
     });
 
+    return {
+      zoomCenter: zoomCenter,
+      apply: apply,
+      state: state
+    };
+  }
+
+  // Create toolbar buttons dynamically (used for inline diagrams)
+  function attachZoomPan(viewport, svg) {
+    var ctrl = initZoomPanState(viewport, svg);
+
+    var buttons = [];
+    buttons.push(createBtn('&#x2212;', 'Zoom out', function() { ctrl.zoomCenter(-ZOOM_STEP); }));
+    buttons.push(createBtn('&#x2b;', 'Zoom in', function() { ctrl.zoomCenter(ZOOM_STEP); }));
+    buttons.push(createBtn('&#x2190;', 'Pan left', function() { ctrl.state.panX += PAN_STEP; ctrl.apply(); }));
+    buttons.push(createBtn('&#x2192;', 'Pan right', function() { ctrl.state.panX -= PAN_STEP; ctrl.apply(); }));
+    buttons.push(createBtn('&#x2191;', 'Pan up', function() { ctrl.state.panY += PAN_STEP; ctrl.apply(); }));
+    buttons.push(createBtn('&#x2193;', 'Pan down', function() { ctrl.state.panY -= PAN_STEP; ctrl.apply(); }));
+    buttons.push(createBtn('&#x21bb;', 'Reset', function() { ctrl.state.scale = 1; ctrl.state.panX = 0; ctrl.state.panY = 0; ctrl.apply(); }));
+
     return buttons;
   }
 
+  // Wire up data-action buttons from a template (used for modal)
+  function attachZoomPanFromTemplate(container, viewport, svg) {
+    var ctrl = initZoomPanState(viewport, svg);
+
+    var actions = {
+      'zoom-out': function() { ctrl.zoomCenter(-ZOOM_STEP); },
+      'zoom-in': function() { ctrl.zoomCenter(ZOOM_STEP); },
+      'pan-left': function() { ctrl.state.panX += PAN_STEP; ctrl.apply(); },
+      'pan-right': function() { ctrl.state.panX -= PAN_STEP; ctrl.apply(); },
+      'pan-up': function() { ctrl.state.panY += PAN_STEP; ctrl.apply(); },
+      'pan-down': function() { ctrl.state.panY -= PAN_STEP; ctrl.apply(); },
+      'reset': function() { ctrl.state.scale = 1; ctrl.state.panX = 0; ctrl.state.panY = 0; ctrl.apply(); }
+    };
+
+    var btns = container.querySelectorAll('[data-action]');
+    for (var i = 0; i < btns.length; i++) {
+      var action = btns[i].getAttribute('data-action');
+      if (actions[action]) {
+        btns[i].addEventListener('click', (function(fn) {
+          return function(e) { e.preventDefault(); e.stopPropagation(); fn(); };
+        })(actions[action]));
+      }
+    }
+  }
+
   function openModal(svgElement, code) {
-    var overlay = document.createElement('div');
-    overlay.className = 'mermaid-modal-overlay';
+    var tpl = document.getElementById('mermaid-modal-template');
+    if (!tpl) return;
 
-    var modal = document.createElement('div');
-    modal.className = 'mermaid-modal';
+    var fragment = tpl.content.cloneNode(true);
+    var overlay = fragment.querySelector('.mermaid-modal-overlay');
+    var viewport = fragment.querySelector('.mermaid-modal-viewport');
+    var closeBtn = fragment.querySelector('.mermaid-modal-close');
 
-    var header = document.createElement('div');
-    header.className = 'mermaid-modal-header';
-
-    var toolbar = document.createElement('div');
-    toolbar.className = 'mermaid-toolbar';
-
-    var viewport = document.createElement('div');
-    viewport.className = 'mermaid-modal-viewport';
-
+    // Insert cloned SVG into viewport
     var svg = svgElement.cloneNode(true);
     svg.style.transform = '';
     svg.style.transformOrigin = '';
     viewport.appendChild(svg);
 
-    var zoomBtns = attachZoomPan(viewport, svg);
-    for (var i = 0; i < zoomBtns.length; i++) toolbar.appendChild(zoomBtns[i]);
+    // Wire up zoom/pan buttons from the template
+    attachZoomPanFromTemplate(overlay, viewport, svg);
 
-    toolbar.appendChild(createSep());
-    toolbar.appendChild(createCopyBtn(code));
+    // Wire up copy button
+    var copyBtn = overlay.querySelector('[data-action="copy"]');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!navigator.clipboard) return;
+        navigator.clipboard.writeText(code).then(function() {
+          copyBtn.innerHTML = ICON_CHECK;
+          setTimeout(function() { copyBtn.innerHTML = ICON_COPY; }, 2000);
+        });
+      });
+    }
 
-    var closeBtn = document.createElement('button');
-    closeBtn.className = 'mermaid-modal-close';
-    closeBtn.innerHTML = '&times;';
-    closeBtn.title = 'Close (Esc)';
-    closeBtn.type = 'button';
-
-    header.appendChild(toolbar);
-    header.appendChild(closeBtn);
-
-    modal.appendChild(header);
-    modal.appendChild(viewport);
-    overlay.appendChild(modal);
-    document.body.appendChild(overlay);
+    document.body.appendChild(fragment);
     document.body.style.overflow = 'hidden';
 
     function close() {

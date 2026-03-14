@@ -1,0 +1,29 @@
+{{define "mermaid-modal"}}
+<template id="mermaid-modal-template">
+  <div class="mermaid-modal-overlay">
+    <div class="mermaid-modal">
+      <div class="mermaid-modal-header">
+        <div class="mermaid-toolbar">
+          <button class="mermaid-toolbar-btn" data-action="zoom-out" title="Zoom out">&#x2212;</button>
+          <button class="mermaid-toolbar-btn" data-action="zoom-in" title="Zoom in">&#x2b;</button>
+          <button class="mermaid-toolbar-btn" data-action="pan-left" title="Pan left">&#x2190;</button>
+          <button class="mermaid-toolbar-btn" data-action="pan-right" title="Pan right">&#x2192;</button>
+          <button class="mermaid-toolbar-btn" data-action="pan-up" title="Pan up">&#x2191;</button>
+          <button class="mermaid-toolbar-btn" data-action="pan-down" title="Pan down">&#x2193;</button>
+          <button class="mermaid-toolbar-btn" data-action="reset" title="Reset">&#x21bb;</button>
+          <span class="mermaid-toolbar-sep"></span>
+          <button class="mermaid-toolbar-btn" data-action="copy" title="Copy diagram code">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="5.5" y="1.5" width="9" height="9" rx="1.5"/>
+              <path d="M1.5 5.5v8c0 .83.67 1.5 1.5 1.5h8"/>
+            </svg>
+          </button>
+        </div>
+        <button class="mermaid-modal-close" title="Close (Esc)" type="button">&times;</button>
+      </div>
+
+      <div class="mermaid-modal-viewport"></div>
+    </div>
+  </div>
+</template>
+{{end}}
