@@ -27,5 +27,6 @@ require (
 	github.com/yuin/goldmark v1.7.16
 	github.com/yuin/goldmark-emoji v1.0.6
 	go.abhg.dev/goldmark/hashtag v0.4.0
+	go.abhg.dev/goldmark/mermaid v0.6.0
 	golang.org/x/sys v0.34.0 // indirect
 )

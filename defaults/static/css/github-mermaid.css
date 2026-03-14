@@ -24,3 +24,13 @@
   color: #ff7b72;
   border-color: #da3633;
 }
+
+.mermaid {
+  background: transparent !important;
+  opacity: 0;
+  transition: opacity 0.15s ease-in;
+}
+
+.mermaid.rendered {
+  opacity: 1;
+}
