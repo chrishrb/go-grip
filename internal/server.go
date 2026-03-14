@@ -157,7 +157,7 @@ type htmlStruct struct {
 
 func serveTemplate(w http.ResponseWriter, html htmlStruct) error {
 	w.Header().Set("Content-Type", "text/html")
-	tmpl, err := template.ParseFS(defaults.Templates, "templates/*.html")
+	tmpl, err := template.ParseFS(defaults.Templates, "templates/layout.html")
 	if err != nil {
 		return err
 	}
