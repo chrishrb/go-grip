@@ -34,3 +34,66 @@
 .mermaid.rendered {
   opacity: 1;
 }
+
+/* Mermaid zoom/pan controls */
+.mermaid-viewport {
+  overflow: hidden;
+  cursor: grab;
+}
+
+.mermaid-viewport.dragging {
+  cursor: grabbing;
+}
+
+.mermaid-toolbar {
+  display: flex;
+  gap: 4px;
+  padding: 4px 0;
+  justify-content: flex-end;
+}
+
+.mermaid-toolbar-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  background: #f6f8fa;
+  color: #57606a;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  user-select: none;
+}
+
+.mermaid-toolbar-btn:hover {
+  background: #eaeef2;
+  color: #24292f;
+}
+
+@media (prefers-color-scheme: dark) {
+  .mermaid-toolbar-btn {
+    border-color: #444c56;
+    background: #2d333b;
+    color: #768390;
+  }
+
+  .mermaid-toolbar-btn:hover {
+    background: #373e47;
+    color: #adbac7;
+  }
+}
+
+[data-theme="dark"] .mermaid-toolbar-btn {
+  border-color: #444c56;
+  background: #2d333b;
+  color: #768390;
+}
+
+[data-theme="dark"] .mermaid-toolbar-btn:hover {
+  background: #373e47;
+  color: #adbac7;
+}
