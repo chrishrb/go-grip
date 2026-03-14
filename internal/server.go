@@ -20,7 +20,6 @@ import (
 
 type Server struct {
 	parser       *Parser
-	theme        string
 	boundingBox  bool
 	host         string
 	port         int
@@ -28,11 +27,10 @@ type Server struct {
 	enableReload bool
 }
 
-func NewServer(host string, port int, theme string, boundingBox bool, browser bool, enableReload bool, parser *Parser) *Server {
+func NewServer(host string, port int, boundingBox bool, browser bool, enableReload bool, parser *Parser) *Server {
 	return &Server{
 		host:         host,
 		port:         port,
-		theme:        theme,
 		boundingBox:  boundingBox,
 		browser:      browser,
 		enableReload: enableReload,
@@ -52,13 +50,6 @@ func (s *Server) Serve(file string) error {
 		reloadMiddleware.Upgrader.CheckOrigin = func(r *http.Request) bool {
 			return true
 		}
-	}
-
-	validThemes := map[string]bool{"light": true, "dark": true, "auto": true}
-
-	if !validThemes[s.theme] {
-		log.Println("Warning: Unknown theme ", s.theme, ", defaulting to 'auto'")
-		s.theme = "auto"
 	}
 
 	dir := http.Dir(directory)
@@ -93,7 +84,6 @@ func (s *Server) Serve(file string) error {
 			// Serve
 			err = serveTemplate(w, htmlStruct{
 				Content:      string(htmlContent),
-				Theme:        s.theme,
 				BoundingBox:  s.boundingBox,
 				CssCodeLight: getCssCode("github"),
 				CssCodeDark:  getCssCode("github-dark"),
@@ -160,7 +150,6 @@ func readToString(dir http.Dir, filename string) ([]byte, error) {
 
 type htmlStruct struct {
 	Content      string
-	Theme        string
 	BoundingBox  bool
 	CssCodeLight string
 	CssCodeDark  string

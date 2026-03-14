@@ -19,14 +19,10 @@ import (
 	"go.abhg.dev/goldmark/mermaid"
 )
 
-type Parser struct {
-	theme string
-}
+type Parser struct{}
 
-func NewParser(theme string) *Parser {
-	return &Parser{
-		theme: theme,
-	}
+func NewParser() *Parser {
+	return &Parser{}
 }
 
 func (m Parser) MdToHTML(input []byte) ([]byte, error) {

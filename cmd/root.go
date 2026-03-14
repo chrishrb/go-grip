@@ -12,7 +12,6 @@ var rootCmd = &cobra.Command{
 	Short: "Render markdown document as html",
 	Args:  cobra.MatchAll(cobra.OnlyValidArgs),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		theme, _ := cmd.Flags().GetString("theme")
 		browser, _ := cmd.Flags().GetBool("browser")
 		host, _ := cmd.Flags().GetString("host")
 		port, _ := cmd.Flags().GetInt("port")
@@ -24,8 +23,8 @@ var rootCmd = &cobra.Command{
 			file = args[0]
 		}
 
-		parser := internal.NewParser(theme)
-		server := internal.NewServer(host, port, theme, boundingBox, browser, !noReload, parser)
+		parser := internal.NewParser()
+		server := internal.NewServer(host, port, boundingBox, browser, !noReload, parser)
 		return server.Serve(file)
 	},
 }
@@ -38,7 +37,6 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.Flags().String("theme", "auto", "Select css theme [light/dark/auto]")
 	rootCmd.Flags().BoolP("browser", "b", true, "Open new browser tab")
 	rootCmd.Flags().StringP("host", "H", "localhost", "Host to use")
 	rootCmd.Flags().IntP("port", "p", 6419, "Port to use")
