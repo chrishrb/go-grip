@@ -13,6 +13,11 @@
     lineColor: '#ccc'
   };
 
+  // SVG icons
+  var ICON_COPY = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="1.5" width="9" height="9" rx="1.5"/><path d="M1.5 5.5v8c0 .83.67 1.5 1.5 1.5h8"/></svg>';
+  var ICON_CHECK = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#3fb950" stroke-width="2"><path d="M3 8l3.5 3.5L13 5"/></svg>';
+  var ICON_EXPAND = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9.5 1.5h5v5M6.5 14.5h-5v-5M14 2l-5 5M2 14l5-5"/></svg>';
+
   function isDark() {
     var theme = document.body.getAttribute('data-theme');
     if (theme === 'dark') return true;
@@ -28,19 +33,35 @@
     return node.dataset.code || node.textContent || '';
   }
 
-  function wrapWithControls(node) {
-    var svg = node.querySelector('svg');
-    if (!svg) return;
+  function createBtn(html, title, fn) {
+    var b = document.createElement('button');
+    b.className = 'mermaid-toolbar-btn';
+    b.innerHTML = html;
+    b.title = title;
+    b.type = 'button';
+    b.addEventListener('click', function(e) { e.preventDefault(); e.stopPropagation(); fn(); });
+    return b;
+  }
 
-    var viewport = document.createElement('div');
-    viewport.className = 'mermaid-viewport';
+  function createSep() {
+    var s = document.createElement('span');
+    s.className = 'mermaid-toolbar-sep';
+    return s;
+  }
 
-    svg.parentNode.removeChild(svg);
+  function createCopyBtn(code) {
+    var btn = createBtn(ICON_COPY, 'Copy diagram code', function() {
+      if (!navigator.clipboard) return;
+      navigator.clipboard.writeText(code).then(function() {
+        btn.innerHTML = ICON_CHECK;
+        setTimeout(function() { btn.innerHTML = ICON_COPY; }, 2000);
+      });
+    });
+    return btn;
+  }
+
+  function attachZoomPan(viewport, svg) {
     svg.style.transformOrigin = '0 0';
-    viewport.appendChild(svg);
-
-    var toolbar = document.createElement('div');
-    toolbar.className = 'mermaid-toolbar';
 
     var scale = 1, panX = 0, panY = 0;
     var ZOOM_STEP = 0.2;
@@ -65,23 +86,14 @@
       zoomAt(scale + delta, viewport.clientWidth / 2, viewport.clientHeight / 2);
     }
 
-    function btn(html, title, fn) {
-      var b = document.createElement('button');
-      b.className = 'mermaid-toolbar-btn';
-      b.innerHTML = html;
-      b.title = title;
-      b.type = 'button';
-      b.addEventListener('click', function(e) { e.preventDefault(); e.stopPropagation(); fn(); });
-      toolbar.appendChild(b);
-    }
-
-    btn('&#x2212;', 'Zoom out', function() { zoomCenter(-ZOOM_STEP); });
-    btn('&#x2b;', 'Zoom in', function() { zoomCenter(ZOOM_STEP); });
-    btn('&#x2190;', 'Pan left', function() { panX += PAN_STEP; apply(); });
-    btn('&#x2192;', 'Pan right', function() { panX -= PAN_STEP; apply(); });
-    btn('&#x2191;', 'Pan up', function() { panY += PAN_STEP; apply(); });
-    btn('&#x2193;', 'Pan down', function() { panY -= PAN_STEP; apply(); });
-    btn('&#x21bb;', 'Reset', function() { scale = 1; panX = 0; panY = 0; apply(); });
+    var buttons = [];
+    buttons.push(createBtn('&#x2212;', 'Zoom out', function() { zoomCenter(-ZOOM_STEP); }));
+    buttons.push(createBtn('&#x2b;', 'Zoom in', function() { zoomCenter(ZOOM_STEP); }));
+    buttons.push(createBtn('&#x2190;', 'Pan left', function() { panX += PAN_STEP; apply(); }));
+    buttons.push(createBtn('&#x2192;', 'Pan right', function() { panX -= PAN_STEP; apply(); }));
+    buttons.push(createBtn('&#x2191;', 'Pan up', function() { panY += PAN_STEP; apply(); }));
+    buttons.push(createBtn('&#x2193;', 'Pan down', function() { panY -= PAN_STEP; apply(); }));
+    buttons.push(createBtn('&#x21bb;', 'Reset', function() { scale = 1; panX = 0; panY = 0; apply(); }));
 
     // Wheel zoom at cursor position
     viewport.addEventListener('wheel', function(e) {
@@ -115,6 +127,92 @@
       viewport.releasePointerCapture(e.pointerId);
       viewport.classList.remove('dragging');
     });
+
+    return buttons;
+  }
+
+  function openModal(svgElement, code) {
+    var overlay = document.createElement('div');
+    overlay.className = 'mermaid-modal-overlay';
+
+    var modal = document.createElement('div');
+    modal.className = 'mermaid-modal';
+
+    var header = document.createElement('div');
+    header.className = 'mermaid-modal-header';
+
+    var toolbar = document.createElement('div');
+    toolbar.className = 'mermaid-toolbar';
+
+    var viewport = document.createElement('div');
+    viewport.className = 'mermaid-modal-viewport';
+
+    var svg = svgElement.cloneNode(true);
+    svg.style.transform = '';
+    svg.style.transformOrigin = '';
+    viewport.appendChild(svg);
+
+    var zoomBtns = attachZoomPan(viewport, svg);
+    for (var i = 0; i < zoomBtns.length; i++) toolbar.appendChild(zoomBtns[i]);
+
+    toolbar.appendChild(createSep());
+    toolbar.appendChild(createCopyBtn(code));
+
+    var closeBtn = document.createElement('button');
+    closeBtn.className = 'mermaid-modal-close';
+    closeBtn.innerHTML = '&times;';
+    closeBtn.title = 'Close (Esc)';
+    closeBtn.type = 'button';
+
+    header.appendChild(toolbar);
+    header.appendChild(closeBtn);
+
+    modal.appendChild(header);
+    modal.appendChild(viewport);
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+    document.body.style.overflow = 'hidden';
+
+    function close() {
+      document.body.removeChild(overlay);
+      document.body.style.overflow = '';
+      document.removeEventListener('keydown', keyHandler);
+    }
+
+    function keyHandler(e) {
+      if (e.key === 'Escape') close();
+    }
+
+    closeBtn.addEventListener('click', close);
+    overlay.addEventListener('click', function(e) { if (e.target === overlay) close(); });
+    document.addEventListener('keydown', keyHandler);
+
+    requestAnimationFrame(function() { closeBtn.focus(); });
+  }
+
+  function wrapWithControls(node) {
+    var svg = node.querySelector('svg');
+    if (!svg) return;
+
+    var code = node.dataset.code || '';
+
+    var viewport = document.createElement('div');
+    viewport.className = 'mermaid-viewport';
+
+    svg.parentNode.removeChild(svg);
+    viewport.appendChild(svg);
+
+    var toolbar = document.createElement('div');
+    toolbar.className = 'mermaid-toolbar';
+
+    var zoomBtns = attachZoomPan(viewport, svg);
+    for (var i = 0; i < zoomBtns.length; i++) toolbar.appendChild(zoomBtns[i]);
+
+    toolbar.appendChild(createSep());
+    toolbar.appendChild(createCopyBtn(code));
+    toolbar.appendChild(createBtn(ICON_EXPAND, 'Open in fullscreen', function() {
+      openModal(svg, code);
+    }));
 
     node.appendChild(toolbar);
     node.appendChild(viewport);

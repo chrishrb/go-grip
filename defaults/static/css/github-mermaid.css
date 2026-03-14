@@ -97,3 +97,128 @@
   background: #373e47;
   color: #adbac7;
 }
+
+/* Toolbar separator */
+.mermaid-toolbar-sep {
+  width: 1px;
+  align-self: stretch;
+  margin: 4px 2px;
+  background: #d0d7de;
+}
+
+@media (prefers-color-scheme: dark) {
+  .mermaid-toolbar-sep {
+    background: #444c56;
+  }
+}
+
+[data-theme="dark"] .mermaid-toolbar-sep {
+  background: #444c56;
+}
+
+/* Fullscreen modal */
+.mermaid-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.mermaid-modal {
+  display: flex;
+  flex-direction: column;
+  width: 90vw;
+  height: 90vh;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.24);
+  overflow: hidden;
+}
+
+.mermaid-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-bottom: 1px solid #d0d7de;
+}
+
+.mermaid-modal-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #57606a;
+  font-size: 24px;
+  cursor: pointer;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.mermaid-modal-close:hover {
+  background: #eaeef2;
+  color: #24292f;
+}
+
+.mermaid-modal-viewport {
+  flex: 1;
+  overflow: hidden;
+  cursor: grab;
+}
+
+.mermaid-modal-viewport.dragging {
+  cursor: grabbing;
+}
+
+@media (prefers-color-scheme: dark) {
+  .mermaid-modal {
+    background: #1c2128;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.48);
+  }
+
+  .mermaid-modal-header {
+    border-bottom-color: #444c56;
+  }
+
+  .mermaid-modal-close {
+    color: #768390;
+  }
+
+  .mermaid-modal-close:hover {
+    background: #373e47;
+    color: #adbac7;
+  }
+}
+
+[data-theme="dark"] .mermaid-modal {
+  background: #1c2128;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.48);
+}
+
+[data-theme="dark"] .mermaid-modal-header {
+  border-bottom-color: #444c56;
+}
+
+[data-theme="dark"] .mermaid-modal-close {
+  color: #768390;
+}
+
+[data-theme="dark"] .mermaid-modal-close:hover {
+  background: #373e47;
+  color: #adbac7;
+}
+
+/* Print: hide controls */
+@media print {
+  .mermaid-toolbar,
+  .mermaid-modal-overlay {
+    display: none !important;
+  }
+}
