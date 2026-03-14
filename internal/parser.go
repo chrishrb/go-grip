@@ -9,6 +9,7 @@ import (
 	"github.com/chrishrb/go-grip/pkg/ghissue"
 	"github.com/chrishrb/go-grip/pkg/highlighting"
 	"github.com/chrishrb/go-grip/pkg/mathjax"
+	"github.com/chrishrb/go-grip/pkg/mermaid"
 	"github.com/chrishrb/go-grip/pkg/tasklist"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark-emoji"
@@ -16,7 +17,6 @@ import (
 	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/renderer/html"
 	"go.abhg.dev/goldmark/hashtag"
-	"go.abhg.dev/goldmark/mermaid"
 )
 
 type Parser struct{}
@@ -37,7 +37,7 @@ func (m Parser) MdToHTML(input []byte) ([]byte, error) {
 			&hashtag.Extender{},
 			alert.New(),
 			highlighting.Highlighting,
-			&mermaid.Extender{RenderMode: mermaid.RenderModeClient},
+			mermaid.NewMermaid(),
 			mathjax.MathJax,
 			ghissue.New(),
 			details.New(),
