@@ -1,7 +1,7 @@
 .theme-toggle {
   position: fixed;
-  top: 12px;
-  right: 12px;
+  top: 20px;
+  right: 20px;
   z-index: 1000;
   background: transparent;
   border: 1px solid #d0d7de;

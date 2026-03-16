@@ -11,14 +11,6 @@
   font-size: 12px;
 }
 
-@media (prefers-color-scheme: dark) {
-  .mermaid-error {
-    background: #2a1616;
-    color: #ff7b72;
-    border-color: #da3633;
-  }
-}
-
 [data-theme="dark"] .mermaid-error {
   background: #2a1616;
   color: #ff7b72;
@@ -64,13 +56,10 @@
 }
 
 .mermaid-toolbar-btn {
-  color: #f0f6fc;
-  background-color: #212830;
+  color: #35292e;
+  background-color: #f6f8fa;
   transition: 80ms cubic-bezier(0.33, 1, 0.68, 1);
   transition-property: color, background-color, box-shadow, border-color;
-}
-
-.mermaid-toolbar-btn {
   position: relative;
   display: inline-block;
   font-size: 14px;
@@ -80,17 +69,31 @@
   vertical-align: middle;
   cursor: pointer;
   user-select: none;
-  border: 1px solid rgb(61, 68, 77);
+  border: 1px solid #d1d9e0;
   border-radius: 6px;
   appearance: none;
 }
 
+[data-theme="dark"] .mermaid-toolbar-btn {
+  color: #f0f6fc;
+  background-color: #212830;
+  border: 1px solid rgb(61, 68, 77);
+}
+
 .mermaid-toolbar-btn:hover {
-  background-color: #262c36;
+  background-color: #eff2f5;
+}
+
+[data-theme="dark"] .mermaid-toolbar-btn:hover {
+  background-color: #212830;
 }
 
 .mermaid-toolbar-btn:active {
-  background-color: #2a313c;
+  background-color: #e6eaef;
+}
+
+[data-theme="dark"] .mermaid-toolbar-btn:active {
+  background-color: #212830;
 }
 
 .mermaid-viewer-control-panel>.zoom-in {

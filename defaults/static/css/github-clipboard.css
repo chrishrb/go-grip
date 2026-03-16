@@ -18,14 +18,26 @@ clipboard-copy {
   transition: background-color 0.2s;
 }
 
+[data-theme="dark"] clipboard-copy {
+  color: #f0f6fc;
+}
+
 /* Hover state */
 clipboard-copy:hover {
-  background-color: #262c36;
+  background-color: #eff2f5;
+}
+
+[data-theme="dark"] clipboard-copy:hover {
+  background-color: #212830;
 }
 
 /* Active state */
 clipboard-copy:active {
-  background-color: #2a313c;
+  background-color: #e6eaef;
+}
+
+[data-theme="dark"] clipboard-copy:active {
+  background-color: #212830;
 }
 
 /* Focus state */
@@ -56,7 +68,7 @@ clipboard-copy:focus:not(:focus-visible) {
 .octicon-copy {
   display: block;
   fill: #9198a1 !important; /* Gray color from GitHub */
-  color: #9198a1 !important;
+  color: #59636e;
 }
 
 /* Check icon - hidden by default, GREEN */
@@ -170,33 +182,6 @@ clipboard-copy:focus:not(:focus-visible) {
 .p-0 { padding: 0 !important; }
 .flex-justify-center { justify-content: center !important; }
 .flex-items-center { align-items: center !important; }
-
-/* Dark mode */
-@media (prefers-color-scheme: dark) {
-  clipboard-copy {
-    color: #58a6ff;
-  }
-  
-  clipboard-copy:hover {
-    background-color: rgba(110, 118, 129, 0.4);
-  }
-  
-  clipboard-copy:active {
-    background-color: rgba(110, 118, 129, 0.5);
-  }
-  
-  .js-clipboard-copy-icon,
-  .octicon-copy {
-    fill: #8b949e !important;
-    color: #8b949e !important;
-  }
-  
-  .js-clipboard-check-icon,
-  .octicon-check {
-    fill: #3fb950 !important;
-    color: #3fb950 !important;
-  }
-}
 
 /* Print */
 @media print {
