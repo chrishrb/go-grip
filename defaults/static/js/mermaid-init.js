@@ -14,10 +14,6 @@
   };
 
   // SVG icons
-  var ICON_COPY = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="1.5" width="9" height="9" rx="1.5"/><path d="M1.5 5.5v8c0 .83.67 1.5 1.5 1.5h8"/></svg>';
-  var ICON_CHECK = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#3fb950" stroke-width="2"><path d="M3 8l3.5 3.5L13 5"/></svg>';
-  var ICON_EXPAND = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9.5 1.5h5v5M6.5 14.5h-5v-5M14 2l-5 5M2 14l5-5"/></svg>';
-
   const ICON_ZOOM_IN = '<svg version="1.1" width="16" height="16" viewBox="0 0 16 16" class="octicon octicon-zoom-in" aria-hidden="true"><path d="M3.75 7.5a.75.75 0 0 1 .75-.75h2.25V4.5a.75.75 0 0 1 1.5 0v2.25h2.25a.75.75 0 0 1 0 1.5H8.25v2.25a.75.75 0 0 1-1.5 0V8.25H4.5a.75.75 0 0 1-.75-.75Z"></path><path d="M7.5 0a7.5 7.5 0 0 1 5.807 12.247l2.473 2.473a.749.749 0 1 1-1.06 1.06l-2.473-2.473A7.5 7.5 0 1 1 7.5 0Zm-6 7.5a6 6 0 1 0 12 0 6 6 0 0 0-12 0Z"></path></svg>';
   const ICON_ZOOM_OUT = '<svg version="1.1" width="16" height="16" viewBox="0 0 16 16" class="octicon octicon-zoom-out" aria-hidden="true"><path d="M4.5 6.75h6a.75.75 0 0 1 0 1.5h-6a.75.75 0 0 1 0-1.5Z"></path><path d="M0 7.5a7.5 7.5 0 1 1 13.307 4.747l2.473 2.473a.749.749 0 1 1-1.06 1.06l-2.473-2.473A7.5 7.5 0 0 1 0 7.5Zm7.5-6a6 6 0 1 0 0 12 6 6 0 0 0 0-12Z"></path></svg>';
   const ICON_RESET = '<svg version="1.1" width="16" height="16" viewBox="0 0 16 16" class="octicon octicon-sync" aria-hidden="true"><path d="M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z"></path></svg>';
@@ -49,23 +45,6 @@
     b.type = 'button';
     b.addEventListener('click', function(e) { e.preventDefault(); e.stopPropagation(); fn(); });
     return b;
-  }
-
-  function createSep() {
-    var s = document.createElement('span');
-    s.className = 'mermaid-toolbar-sep';
-    return s;
-  }
-
-  function createCopyBtn(code) {
-    var btn = createBtn(ICON_COPY, 'Copy diagram code', function() {
-      if (!navigator.clipboard) return;
-      navigator.clipboard.writeText(code).then(function() {
-        btn.innerHTML = ICON_CHECK;
-        setTimeout(function() { btn.innerHTML = ICON_COPY; }, 2000);
-      });
-    });
-    return btn;
   }
 
   function attachZoomPan(viewport, svg) {
@@ -106,70 +85,12 @@
     return buttons;
   }
 
-  function openModal(svgElement, code) {
-    var overlay = document.createElement('div');
-    overlay.className = 'mermaid-modal-overlay';
-
-    var modal = document.createElement('div');
-    modal.className = 'mermaid-modal';
-
-    var header = document.createElement('div');
-    header.className = 'mermaid-modal-header';
-
-    var toolbar = document.createElement('div');
-    toolbar.className = 'mermaid-viewer-control-panel';
-
-    var viewport = document.createElement('div');
-    viewport.className = 'mermaid-modal-viewport';
-
-    var svg = svgElement.cloneNode(true);
-    svg.style.transform = '';
-    svg.style.transformOrigin = '';
-    viewport.appendChild(svg);
-
-    var zoomBtns = attachZoomPan(viewport, svg);
-    for (var i = 0; i < zoomBtns.length; i++) toolbar.appendChild(zoomBtns[i]);
-
-    toolbar.appendChild(createSep());
-    toolbar.appendChild(createCopyBtn(code));
-
-    var closeBtn = document.createElement('button');
-    closeBtn.className = 'mermaid-modal-close';
-    closeBtn.innerHTML = '&times;';
-    closeBtn.title = 'Close (Esc)';
-    closeBtn.type = 'button';
-
-    header.appendChild(toolbar);
-    header.appendChild(closeBtn);
-
-    modal.appendChild(header);
-    modal.appendChild(viewport);
-    overlay.appendChild(modal);
-    document.body.appendChild(overlay);
-    document.body.style.overflow = 'hidden';
-
-    function close() {
-      document.body.removeChild(overlay);
-      document.body.style.overflow = '';
-      document.removeEventListener('keydown', keyHandler);
-    }
-
-    function keyHandler(e) {
-      if (e.key === 'Escape') close();
-    }
-
-    closeBtn.addEventListener('click', close);
-    overlay.addEventListener('click', function(e) { if (e.target === overlay) close(); });
-    document.addEventListener('keydown', keyHandler);
-
-    requestAnimationFrame(function() { closeBtn.focus(); });
-  }
-
   function wrapWithControls(node) {
     var svg = node.querySelector('svg');
     if (!svg) return;
 
-    var code = node.dataset.code || '';
+    // Use code for copy button
+    // var code = node.dataset.code || '';
 
     var viewport = document.createElement('div');
     viewport.className = 'mermaid-viewport';
@@ -182,13 +103,6 @@
 
     var zoomBtns = attachZoomPan(viewport, svg);
     for (var i = 0; i < zoomBtns.length; i++) toolbar.appendChild(zoomBtns[i]);
-
-    // TODO:
-    // toolbar.appendChild(createSep());
-    // toolbar.appendChild(createCopyBtn(code));
-    // toolbar.appendChild(createBtn(ICON_EXPAND, 'Open in fullscreen', function() {
-    //   openModal(svg, code);
-    // }));
 
     node.appendChild(toolbar);
     node.appendChild(viewport);
