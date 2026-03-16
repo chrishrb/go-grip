@@ -11,14 +11,6 @@
   font-size: 12px;
 }
 
-@media (prefers-color-scheme: dark) {
-  .mermaid-error {
-    background: #2a1616;
-    color: #ff7b72;
-    border-color: #da3633;
-  }
-}
-
 [data-theme="dark"] .mermaid-error {
   background: #2a1616;
   color: #ff7b72;
@@ -33,4 +25,108 @@
 
 .mermaid.rendered {
   opacity: 1;
+}
+
+/* Control panel for Mermaid viewer */
+.mermaid-viewport {
+  overflow: hidden;
+  height: 100%;
+}
+
+.markdown-body pre {
+  position: relative;
+}
+
+.mermaid-viewport svg { 
+  padding-bottom: 120px;
+}
+
+.mermaid-viewer-control-panel {
+  position: absolute;
+  bottom: 1em;
+  right: 1em;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: .2em;
+  z-index: 10;
+}
+
+.mermaid-viewer-control-panel>button {
+  padding: 5px 7px;
+}
+
+.mermaid-toolbar-btn {
+  color: #35292e;
+  background-color: #f6f8fa;
+  transition: 80ms cubic-bezier(0.33, 1, 0.68, 1);
+  transition-property: color, background-color, box-shadow, border-color;
+  position: relative;
+  display: inline-block;
+  font-size: 14px;
+  font-weight: var(--base-text-weight-medium, 500);
+  line-height: 20px;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  user-select: none;
+  border: 1px solid #d1d9e0;
+  border-radius: 6px;
+  appearance: none;
+}
+
+[data-theme="dark"] .mermaid-toolbar-btn {
+  color: #f0f6fc;
+  background-color: #212830;
+  border: 1px solid rgb(61, 68, 77);
+}
+
+.mermaid-toolbar-btn:hover {
+  background-color: #eff2f5;
+}
+
+[data-theme="dark"] .mermaid-toolbar-btn:hover {
+  background-color: #212830;
+}
+
+.mermaid-toolbar-btn:active {
+  background-color: #e6eaef;
+}
+
+[data-theme="dark"] .mermaid-toolbar-btn:active {
+  background-color: #212830;
+}
+
+.mermaid-viewer-control-panel>.zoom-in {
+  grid-column: 3;
+  grid-row: 1;
+}
+
+.mermaid-viewer-control-panel>.zoom-out {
+  grid-column: 3;
+  grid-row: 3;
+}
+
+.mermaid-viewer-control-panel>.reset {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.mermaid-viewer-control-panel>.up {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.mermaid-viewer-control-panel>.down {
+  grid-column: 2;
+  grid-row: 3;
+}
+
+.mermaid-viewer-control-panel>.left {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.mermaid-viewer-control-panel>.right {
+  grid-column: 3;
+  grid-row: 2;
 }
