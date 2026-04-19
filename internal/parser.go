@@ -46,7 +46,6 @@ func (m Parser) MdToHTML(input []byte) ([]byte, error) {
 			parser.WithAutoHeadingID(),
 		),
 		goldmark.WithRendererOptions(
-			html.WithHardWraps(),
 			html.WithUnsafe(),
 		),
 	)
