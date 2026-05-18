@@ -5,6 +5,7 @@ import (
 	"io"
 	"log/slog"
 	"os"
+	"strings"
 
 	"github.com/chrishrb/go-grip/internal"
 	"github.com/spf13/cobra"
@@ -24,6 +25,7 @@ var rootCmd = &cobra.Command{
 		host, _ := cmd.Flags().GetString("host")
 		port, _ := cmd.Flags().GetInt("port")
 		boundingBox, _ := cmd.Flags().GetBool("bounding-box")
+		disabledFeatures, _ := cmd.Flags().GetStringSlice("disable-markdown-feature")
 		noReload, _ := cmd.Flags().GetBool("no-reload")
 		logger, err := newLogger(cmd, os.Stderr)
 		if err != nil {
@@ -35,7 +37,11 @@ var rootCmd = &cobra.Command{
 			file = args[0]
 		}
 
-		parser := internal.NewParser()
+		if err := internal.ValidateMarkdownFeatures(disabledFeatures); err != nil {
+			return err
+		}
+
+		parser := internal.NewParser(disabledFeatures)
 		server := internal.NewServer(host, port, boundingBox, browser, !noReload, parser, logger)
 		return server.Serve(file)
 	},
@@ -73,6 +79,11 @@ func init() {
 	rootCmd.Flags().StringP("host", "H", "localhost", "Host to use")
 	rootCmd.Flags().IntP("port", "p", 6419, "Port to use")
 	rootCmd.Flags().Bool("bounding-box", true, "Add bounding box to HTML")
+	rootCmd.Flags().StringSlice(
+		"disable-markdown-feature",
+		nil,
+		"Disable optional markdown feature(s): "+strings.Join(internal.SupportedMarkdownFeatures(), ", "),
+	)
 	rootCmd.Flags().Bool("no-reload", false, "Disable automatic browser reload on file changes")
 	rootCmd.Flags().String("log-level", "info", "Log level on stderr: error, warn, info or debug")
 }
