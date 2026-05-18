@@ -117,6 +117,7 @@ func (s *Server) newHandler(dir http.Dir) http.Handler {
 					BoundingBox:  s.boundingBox,
 					CssCodeLight: getCssCode("github"),
 					CssCodeDark:  getCssCode("github-dark"),
+					Features:     s.parser.TemplateFeatures(),
 				})
 				if err != nil {
 					log.Fatal(err)
@@ -159,6 +160,7 @@ type htmlStruct struct {
 	BoundingBox  bool
 	CssCodeLight string
 	CssCodeDark  string
+	Features     map[string]bool
 }
 
 func serveTemplate(w http.ResponseWriter, html htmlStruct) error {

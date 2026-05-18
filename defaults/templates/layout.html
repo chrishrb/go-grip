@@ -20,16 +20,24 @@
     <style id="highlight-light" media="(prefers-color-scheme: light)">{{ .CssCodeLight }}</style>
     <style id="highlight-dark" media="(prefers-color-scheme: dark)">{{ .CssCodeDark }}</style>
     <link rel="stylesheet" href="/static/css/github-print.css" media="print" />
+    {{if index .Features "mermaid"}}
     <link rel="stylesheet" href="/static/css/github-mermaid.css" />
+    {{end}}
     <link rel="stylesheet" href="/static/css/github-clipboard.css" />
+    {{if index .Features "mathjax"}}
     <link rel="stylesheet" href="/static/css/mathjax.css" />
+    {{end}}
     <link rel="stylesheet" href="/static/css/theme-switch.css" />
     <script src="/static/js/theme-switch.js"></script>
     <script src="/static/js/clipboard-copy.js"></script>
+    {{if index .Features "mathjax"}}
     <script src="/static/js/mathjax-options.js"></script>
     <script src="/static/js/tex-mml-chtml.js"></script>
+    {{end}}
+    {{if index .Features "mermaid"}}
     <script src="/static/js/mermaid.min.js"></script>
     <script src="/static/js/mermaid-init.js"></script>
+    {{end}}
   </head>
 
   <body class="markdown-body">

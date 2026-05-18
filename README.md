@@ -105,22 +105,30 @@ You can also specify a port:
 go-grip -p 80 README.md
 ```
 
-or just open a file-tree with all available files in the current directory:
+Or preview the current directory. If `README.md` exists, go-grip opens that page first:
 
 ```bash
-go-grip -r=false
+go-grip .
 ```
 
-It's also possible to activate the darkmode:
-
-```bash
-go-grip -d .
-```
-
-To disable automatic browser reload on file changes (useful for stable editing):
+To keep the preview stable while editing and refresh manually in the browser:
 
 ```bash
 go-grip --no-reload README.md
+```
+
+To disable automatic browser reload and MathJax rendering together:
+
+```bash
+go-grip --no-reload --disable-markdown-feature mathjax README.md
+```
+
+To disable markdown features in the renderer, use `--disable-markdown-feature`.
+Supported feature names are `details`, `footnote`, `ghissue`, `mathjax`, and `mermaid`.
+
+```bash
+go-grip --disable-markdown-feature mathjax README.md
+go-grip --disable-markdown-feature mathjax --disable-markdown-feature mermaid README.md
 ```
 
 To terminate the current server simply press `CTRL-C`.
