@@ -18,7 +18,7 @@ func TestDirectoryListingIgnoresCacheValidators(t *testing.T) {
 		t.Fatalf("write README.md: %v", err)
 	}
 
-	server := NewServer("localhost", 6419, false, false, false, NewParser())
+	server := NewServer("localhost", 6419, false, false, false, NewParser(nil))
 	handler := server.newHandler(http.Dir(tmpDir))
 
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
@@ -46,7 +46,7 @@ func TestRegularFileStillSupportsConditionalRequests(t *testing.T) {
 		t.Fatalf("write plain.txt: %v", err)
 	}
 
-	server := NewServer("localhost", 6419, false, false, false, NewParser())
+	server := NewServer("localhost", 6419, false, false, false, NewParser(nil))
 	handler := server.newHandler(http.Dir(tmpDir))
 
 	req := httptest.NewRequest(http.MethodGet, "/plain.txt", nil)
@@ -68,7 +68,7 @@ func TestMarkdownResponsesDisableCaching(t *testing.T) {
 		t.Fatalf("write README.md: %v", err)
 	}
 
-	server := NewServer("localhost", 6419, false, false, false, NewParser())
+	server := NewServer("localhost", 6419, false, false, false, NewParser(nil))
 	handler := server.newHandler(http.Dir(tmpDir))
 
 	req := httptest.NewRequest(http.MethodGet, "/README.md", nil)
