@@ -6,6 +6,7 @@ import (
 	"github.com/chrishrb/go-grip/pkg/alert"
 	"github.com/chrishrb/go-grip/pkg/details"
 	"github.com/chrishrb/go-grip/pkg/footnote"
+	"github.com/chrishrb/go-grip/pkg/frontmatter"
 	"github.com/chrishrb/go-grip/pkg/ghissue"
 	"github.com/chrishrb/go-grip/pkg/highlighting"
 	"github.com/chrishrb/go-grip/pkg/mathjax"
@@ -26,6 +27,14 @@ func NewParser() *Parser {
 }
 
 func (m Parser) MdToHTML(input []byte) ([]byte, error) {
+	var prefix []byte
+	if fm, body, ok := frontmatter.Extract(input); ok {
+		if table, err := frontmatter.RenderTable(fm); err == nil {
+			prefix = table
+			input = body
+		}
+	}
+
 	md := goldmark.New(
 		goldmark.WithExtensions(
 			extension.Linkify,
@@ -53,5 +62,5 @@ func (m Parser) MdToHTML(input []byte) ([]byte, error) {
 	if err := md.Convert(input, &buf); err != nil {
 		return nil, err
 	}
-	return buf.Bytes(), nil
+	return append(prefix, buf.Bytes()...), nil
 }
