@@ -123,6 +123,9 @@ To disable automatic browser reload on file changes (useful for stable editing):
 go-grip --no-reload README.md
 ```
 
+The browser page title is derived from the Markdown filename (`my-guide_v2.md` becomes `My Guide V2`).
+
+
 To terminate the current server simply press `CTRL-C`.
 
 ## :pencil: Examples
