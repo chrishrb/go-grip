@@ -24,24 +24,22 @@ import (
 const defaultHTMLTitle = "go-grip - markdown preview"
 
 type Server struct {
-	parser        *Parser
-	boundingBox   bool
-	host          string
-	port          int
-	browser       bool
-	enableReload  bool
-	filenameTitle bool
+	parser       *Parser
+	boundingBox  bool
+	host         string
+	port         int
+	browser      bool
+	enableReload bool
 }
 
-func NewServer(host string, port int, boundingBox bool, browser bool, enableReload bool, filenameTitle bool, parser *Parser) *Server {
+func NewServer(host string, port int, boundingBox bool, browser bool, enableReload bool, parser *Parser) *Server {
 	return &Server{
-		host:          host,
-		port:          port,
-		boundingBox:   boundingBox,
-		browser:       browser,
-		enableReload:  enableReload,
-		filenameTitle: filenameTitle,
-		parser:        parser,
+		host:         host,
+		port:         port,
+		boundingBox:  boundingBox,
+		browser:      browser,
+		enableReload: enableReload,
+		parser:       parser,
 	}
 }
 
@@ -171,10 +169,6 @@ type htmlStruct struct {
 }
 
 func (s *Server) pageTitle(filename string) string {
-	if !s.filenameTitle {
-		return defaultHTMLTitle
-	}
-
 	title := formatFilenameTitle(filename)
 	if title == "" {
 		return defaultHTMLTitle

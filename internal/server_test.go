@@ -18,7 +18,7 @@ func TestDirectoryListingIgnoresCacheValidators(t *testing.T) {
 		t.Fatalf("write README.md: %v", err)
 	}
 
-	server := NewServer("localhost", 6419, false, false, false, false, NewParser())
+	server := NewServer("localhost", 6419, false, false, false, NewParser())
 	handler := server.newHandler(http.Dir(tmpDir))
 
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
@@ -46,7 +46,7 @@ func TestRegularFileStillSupportsConditionalRequests(t *testing.T) {
 		t.Fatalf("write plain.txt: %v", err)
 	}
 
-	server := NewServer("localhost", 6419, false, false, false, false, NewParser())
+	server := NewServer("localhost", 6419, false, false, false, NewParser())
 	handler := server.newHandler(http.Dir(tmpDir))
 
 	req := httptest.NewRequest(http.MethodGet, "/plain.txt", nil)
@@ -68,7 +68,7 @@ func TestMarkdownResponsesDisableCaching(t *testing.T) {
 		t.Fatalf("write README.md: %v", err)
 	}
 
-	server := NewServer("localhost", 6419, false, false, false, false, NewParser())
+	server := NewServer("localhost", 6419, false, false, false, NewParser())
 	handler := server.newHandler(http.Dir(tmpDir))
 
 	req := httptest.NewRequest(http.MethodGet, "/README.md", nil)
@@ -89,8 +89,8 @@ func TestMarkdownResponsesDisableCaching(t *testing.T) {
 	if !strings.Contains(recorder.Body.String(), "Hello") {
 		t.Fatalf("expected rendered markdown response to contain document content, got %q", recorder.Body.String())
 	}
-	if !strings.Contains(recorder.Body.String(), "<title>"+defaultHTMLTitle+"</title>") {
-		t.Fatalf("expected default HTML title, got %q", recorder.Body.String())
+	if !strings.Contains(recorder.Body.String(), "<title>README</title>") {
+		t.Fatalf("expected filename-based HTML title, got %q", recorder.Body.String())
 	}
 }
 
@@ -132,7 +132,7 @@ func TestFilenameTitleResponses(t *testing.T) {
 		}
 	}
 
-	server := NewServer("localhost", 6419, false, false, false, true, NewParser())
+	server := NewServer("localhost", 6419, false, false, false, NewParser())
 	handler := server.newHandler(http.Dir(tmpDir))
 
 	tests := []struct {
