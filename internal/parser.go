@@ -10,6 +10,7 @@ import (
 	"github.com/chrishrb/go-grip/pkg/ghissue"
 	"github.com/chrishrb/go-grip/pkg/highlighting"
 	"github.com/chrishrb/go-grip/pkg/mathjax"
+	"github.com/chrishrb/go-grip/pkg/slug"
 	"github.com/chrishrb/go-grip/pkg/tasklist"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark-emoji"
@@ -58,8 +59,12 @@ func (m Parser) MdToHTML(input []byte) ([]byte, error) {
 			html.WithUnsafe(),
 		),
 	)
+	// Generate heading ids like GitHub does (e.g. keep underscores), so that
+	// anchor links written against GitHub's ids resolve here too.
+	ctx := parser.NewContext(parser.WithIDs(slug.NewIDs()))
+
 	var buf bytes.Buffer
-	if err := md.Convert(input, &buf); err != nil {
+	if err := md.Convert(input, &buf, parser.WithContext(ctx)); err != nil {
 		return nil, err
 	}
 	return append(prefix, buf.Bytes()...), nil

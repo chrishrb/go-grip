@@ -65,3 +65,29 @@ func TestMdToHTML_FrontmatterBodyNotInTable(t *testing.T) {
 		t.Errorf("body paragraph should be rendered")
 	}
 }
+
+func TestMdToHTML_HeadingIDsMatchGitHub(t *testing.T) {
+	p := NewParser()
+	input := []byte("### Implementation `ATTACK_PATTERN`\n\n[link](#implementation-attack_pattern)\n")
+	out, err := p.MdToHTML(input)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	s := string(out)
+	if !strings.Contains(s, `id="implementation-attack_pattern"`) {
+		t.Errorf("expected underscore preserved in heading id, got:\n%s", s)
+	}
+}
+
+func TestMdToHTML_DuplicateHeadingIDs(t *testing.T) {
+	p := NewParser()
+	input := []byte("# Notes\n\n# Notes\n")
+	out, err := p.MdToHTML(input)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	s := string(out)
+	if !strings.Contains(s, `id="notes"`) || !strings.Contains(s, `id="notes-1"`) {
+		t.Errorf("expected deduplicated heading ids, got:\n%s", s)
+	}
+}
