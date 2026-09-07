@@ -108,14 +108,12 @@ go-grip -p 80 README.md
 or just open a file-tree with all available files in the current directory:
 
 ```bash
-go-grip -r=false
+go-grip
 ```
 
-It's also possible to activate the darkmode:
+If a `README.md` exists in that directory it is opened directly, otherwise the file-tree is shown. You can also browse the tree at any time on http://localhost:6419.
 
-```bash
-go-grip -d .
-```
+Dark mode is not a launch option: use the toggle in the top right corner of the page. Your choice is stored in the browser's local storage, so each browser remembers its own theme. Without a stored choice the page follows the operating system's `prefers-color-scheme` setting.
 
 To disable automatic browser reload on file changes (useful for stable editing):
 
