@@ -8,9 +8,10 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "go-grip [file]",
-	Short: "Render markdown document as html",
-	Args:  cobra.MatchAll(cobra.OnlyValidArgs),
+	Use:     "go-grip [file]",
+	Short:   "Render markdown document as html",
+	Version: buildVersion(),
+	Args:    cobra.MatchAll(cobra.OnlyValidArgs),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		browser, _ := cmd.Flags().GetBool("browser")
 		host, _ := cmd.Flags().GetString("host")
@@ -37,6 +38,7 @@ func Execute() {
 }
 
 func init() {
+	rootCmd.SetVersionTemplate("{{.Name}} {{.Version}}\n")
 	rootCmd.Flags().BoolP("browser", "b", true, "Open new browser tab")
 	rootCmd.Flags().StringP("host", "H", "localhost", "Host to use")
 	rootCmd.Flags().IntP("port", "p", 6419, "Port to use")

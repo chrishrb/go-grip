@@ -21,9 +21,16 @@
         f pkgs);
   in {
     packages = forAllSystems (pkgs: {
-      default = pkgs.buildGoModule {
-        name = "go-grip";
+      default = pkgs.buildGoModule rec {
+        pname = "go-grip";
+        version = self.shortRev or self.dirtyShortRev or "dev";
         src = self;
+        ldflags = [
+          "-s"
+          "-w"
+          "-X"
+          "github.com/chrishrb/go-grip/cmd.version=${version}"
+        ];
         # Only for updating vendorHas
         # vendorHash = "sha256-RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR=";
         vendorHash = "sha256-QsLiCsFY6nI85jsEZtAgmObEKpBSZWhzZk+TlukM8JU=";
