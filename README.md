@@ -125,6 +125,11 @@ go-grip --no-reload README.md
 
 The browser page title is derived from the Markdown filename (`my-guide_v2.md` becomes `My Guide V2`).
 
+To check which build you are running:
+
+```bash
+go-grip --version
+```
 
 To terminate the current server simply press `CTRL-C`.
 

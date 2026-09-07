@@ -5,8 +5,8 @@ on:
     types: [created]
 
 permissions:
-    contents: write
-    packages: write
+  contents: write
+  packages: write
 
 jobs:
   releases-matrix:
@@ -24,12 +24,13 @@ jobs:
           - goarch: "386"
             goos: darwin
     steps:
-    - uses: actions/checkout@v4
-    - uses: wangyoucao577/go-release-action@v1
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        goos: ${{ matrix.goos }}
-        goarch: ${{ matrix.goarch }}
-        goversion: 1.23
-        binary_name: "go-grip"
-        extra_files: LICENSE README.md
+      - uses: actions/checkout@v4
+      - uses: wangyoucao577/go-release-action@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          goos: ${{ matrix.goos }}
+          goarch: ${{ matrix.goarch }}
+          goversion: 1.23
+          binary_name: "go-grip"
+          ldflags: -s -w -X github.com/chrishrb/go-grip/cmd.version=${{ github.ref_name }}
+          extra_files: LICENSE README.md

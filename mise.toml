@@ -36,12 +36,13 @@ run = "go test ./..."
 description = "Compile for every OS and Platform"
 shell = '''
 echo "Compiling for every OS and Platform"
-GOOS=darwin GOARCH=amd64 go build -o bin/go-grip-darwin-amd64 main.go
-GOOS=darwin GOARCH=arm64 go build -o bin/go-grip-darwin-arm64 main.go
-GOOS=linux GOARCH=amd64 go build -o bin/go-grip-linux-amd64 main.go
-GOOS=linux GOARCH=arm64 go build -o bin/go-grip-linux-arm64 main.go
-GOOS=windows GOARCH=amd64 go build -o bin/go-grip-windows-amd64.exe main.go
-GOOS=windows GOARCH=arm64 go build -o bin/go-grip-windows-arm64.exe main.go
+LDFLAGS="-s -w -X github.com/chrishrb/go-grip/cmd.version=$(git describe --tags --always --dirty)"
+GOOS=darwin GOARCH=amd64 go build -ldflags "$LDFLAGS" -o bin/go-grip-darwin-amd64 main.go
+GOOS=darwin GOARCH=arm64 go build -ldflags "$LDFLAGS" -o bin/go-grip-darwin-arm64 main.go
+GOOS=linux GOARCH=amd64 go build -ldflags "$LDFLAGS" -o bin/go-grip-linux-amd64 main.go
+GOOS=linux GOARCH=arm64 go build -ldflags "$LDFLAGS" -o bin/go-grip-linux-arm64 main.go
+GOOS=windows GOARCH=amd64 go build -ldflags "$LDFLAGS" -o bin/go-grip-windows-amd64.exe main.go
+GOOS=windows GOARCH=arm64 go build -ldflags "$LDFLAGS" -o bin/go-grip-windows-arm64.exe main.go
 '''
 
 [tasks.format]
