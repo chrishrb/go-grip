@@ -1,0 +1,143 @@
+/* Button look is shared with .theme-toggle; only its position differs. */
+.width-toggle {
+  top: 60px;
+}
+
+/* Opens to the left of .width-toggle, twice its width. */
+.width-panel {
+  position: fixed;
+  top: 60px;
+  right: 60px;
+  z-index: 1000;
+  box-sizing: border-box;
+  width: 64px;
+  display: flex;
+  flex-direction: column;
+  padding: 4px;
+  background: #ffffff;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(140, 149, 159, 0.2);
+}
+
+.width-panel[hidden] {
+  display: none;
+}
+
+.width-panel button {
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+  padding: 4px 0;
+  font: inherit;
+  font-size: 14px;
+  text-align: center;
+  color: #1f2328;
+  cursor: pointer;
+}
+
+.width-panel button:hover {
+  background: #f6f8fa;
+}
+
+.width-panel .active {
+  font-weight: 600;
+  color: #0969da;
+}
+
+/* Colours are inherited from the panel, so no per-theme rules are needed. */
+.width-custom {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 4px 0;
+  margin-top: 4px;
+  font-size: 14px;
+  border-color: inherit;
+}
+
+.width-custom input {
+  width: 2em;
+  padding: 2px 0;
+  font: inherit;
+  font-weight: inherit;
+  text-align: center;
+  color: inherit;
+  background: transparent;
+  border: 1px solid;
+  border-color: inherit;
+  border-radius: 4px;
+}
+
+.width-custom input:focus {
+  outline: none;
+  border-color: currentColor;
+}
+
+@media (prefers-color-scheme: dark) {
+  .width-panel {
+    background: #161b22;
+    border-color: #30363d;
+    box-shadow: 0 8px 24px rgba(1, 4, 9, 0.85);
+  }
+  .width-panel button {
+    color: #e6edf3;
+  }
+  .width-panel button:hover {
+    background: #30363d;
+  }
+  .width-panel .active {
+    color: #4493f8;
+  }
+}
+
+[data-theme="dark"] .width-panel {
+  background: #161b22;
+  border-color: #30363d;
+  box-shadow: 0 8px 24px rgba(1, 4, 9, 0.85);
+}
+[data-theme="dark"] .width-panel button {
+  color: #e6edf3;
+}
+[data-theme="dark"] .width-panel button:hover {
+  background: #30363d;
+}
+[data-theme="dark"] .width-panel .active {
+  color: #4493f8;
+}
+
+[data-theme="light"] .width-panel {
+  background: #ffffff;
+  border-color: #d0d7de;
+  box-shadow: 0 8px 24px rgba(140, 149, 159, 0.2);
+}
+[data-theme="light"] .width-panel button {
+  color: #1f2328;
+}
+[data-theme="light"] .width-panel button:hover {
+  background: #f6f8fa;
+}
+[data-theme="light"] .width-panel .active {
+  color: #0969da;
+}
+
+/* Below 940px the container already spans the viewport, so the toggle has no effect. */
+@media (max-width: 939px) {
+  .width-toggle,
+  .width-panel {
+    display: none !important;
+  }
+
+  /* Ignore a stored width set by width-switch.js on narrow windows. */
+  .container {
+    min-width: 0 !important;
+    max-width: none !important;
+  }
+}
+
+@media print {
+  .width-panel {
+    display: none !important;
+  }
+}
