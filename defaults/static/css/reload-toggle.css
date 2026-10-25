@@ -1,0 +1,7 @@
+#reload-toggle {
+  top: 62px;
+}
+
+#reload-toggle .theme-toggle-icon {
+  display: flex;
+}

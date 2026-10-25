@@ -857,3 +857,37 @@ func TestWatchSetFor(t *testing.T) {
 		})
 	}
 }
+
+func TestReloadToggleButtonRenderedOnlyWhenReloadEnabled(t *testing.T) {
+	t.Parallel()
+
+	dir := writeTree(t, map[string]string{"README.md": "# Hello\n"})
+	reloading, _ := reloadServer(t)
+
+	tests := []struct {
+		name       string
+		server     *Server
+		wantButton bool
+	}{
+		{name: "shown when auto-reload enabled", server: reloading, wantButton: true},
+		{name: "hidden when auto-reload disabled", server: NewServer("localhost", 6419, false, false, false, NewParser(), nil), wantButton: false},
+	}
+
+	for _, tt := range tests {
+		handler := tt.server.newHandler(http.Dir(dir))
+		for _, page := range []string{"/README.md", "/"} {
+			recorder := httptest.NewRecorder()
+			handler.ServeHTTP(recorder, httptest.NewRequest(http.MethodGet, page, nil))
+
+			if recorder.Code != http.StatusOK {
+				t.Fatalf("%s %s: expected status %d, got %d", tt.name, page, http.StatusOK, recorder.Code)
+			}
+			hasButton := strings.Contains(recorder.Body.String(), `id="reload-toggle"`)
+			hasScript := strings.Contains(recorder.Body.String(), `/static/js/reload-toggle.js`)
+			if hasButton != tt.wantButton || hasScript != tt.wantButton {
+				t.Fatalf("%s %s: expected reload-toggle button and script present=%v, got button=%v script=%v",
+					tt.name, page, tt.wantButton, hasButton, hasScript)
+			}
+		}
+	}
+}
