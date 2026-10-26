@@ -253,6 +253,32 @@ func TestFormatFilenameTitle(t *testing.T) {
 	}
 }
 
+func TestBrowseHost(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name string
+		host string
+		want string
+	}{
+		{name: "keeps localhost", host: "localhost", want: "localhost"},
+		{name: "keeps specific ipv4", host: "192.168.1.20", want: "192.168.1.20"},
+		{name: "keeps loopback ipv6", host: "::1", want: "::1"},
+		{name: "maps empty host", host: "", want: "localhost"},
+		{name: "maps ipv4 wildcard", host: "0.0.0.0", want: "localhost"},
+		{name: "maps ipv6 wildcard", host: "::", want: "localhost"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			if got := browseHost(tt.host); got != tt.want {
+				t.Fatalf("browseHost(%q) = %q, want %q", tt.host, got, tt.want)
+			}
+		})
+	}
+}
+
 func TestFilenameTitleResponses(t *testing.T) {
 	t.Parallel()
 
