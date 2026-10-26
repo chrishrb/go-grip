@@ -20,6 +20,9 @@ var rootCmd = &cobra.Command{
 		return err
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+		// avoid printing the usage text on a bad host or a busy port
+		cmd.SilenceUsage = true
+
 		browser, _ := cmd.Flags().GetBool("browser")
 		host, _ := cmd.Flags().GetString("host")
 		port, _ := cmd.Flags().GetInt("port")
