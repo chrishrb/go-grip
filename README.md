@@ -131,6 +131,8 @@ To disable automatic browser reload on file changes (useful for stable editing):
 go-grip --no-reload README.md
 ```
 
+With auto-reload running, the button below the theme toggle pauses reloading for that page instance only; resuming refreshes the page once if anything changed while paused.
+
 go-grip logs to stderr. `--log-level` sets how much it prints: `error`, `warn`, `info` (the default) or `debug`. At `info` you only see the startup lines, warnings and errors; `error` hides the startup lines too. `debug` adds a timestamped line for every request (method, path, status, duration), every file system event and whether it was ignored, each debounced reload and how many events it coalesced, and each live reload connection. Attach that output when reporting a reload problem:
 
 ```bash

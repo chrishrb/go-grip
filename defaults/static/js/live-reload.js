@@ -12,14 +12,26 @@
 
   var source = null;
 
+  // The pause button (reload-toggle.js) can hold reloads for this page; the
+  // stream stays open so a change seen while paused is not lost.
+  function reload() {
+    var toggle = window.gripReloadToggle;
+    if (toggle && toggle.paused) {
+      toggle.pending = true;
+      return;
+    }
+    if (source) {
+      source.close();
+      source = null;
+    }
+    location.reload();
+  }
+
   function connect() {
     var es = new EventSource(url);
     var lostConnection = false;
 
-    es.addEventListener("reload", function () {
-      es.close();
-      location.reload();
-    });
+    es.addEventListener("reload", reload);
 
     es.onerror = function () {
       lostConnection = true;
@@ -29,8 +41,8 @@
     // restarted, so the page may be stale.
     es.onopen = function () {
       if (lostConnection) {
-        es.close();
-        location.reload();
+        lostConnection = false;
+        reload();
       }
     };
 
@@ -52,10 +64,16 @@
   // Back from the cache. Files may have changed while the page was frozen
   // and the server cannot tell which ones, so load the page fresh. On
   // localhost that costs one render, and the new page opens its own stream.
+  // A paused page instead records the possible change and reconnects.
   window.addEventListener("pageshow", function (event) {
-    if (event.persisted) {
-      location.reload();
+    if (!event.persisted) return;
+    var toggle = window.gripReloadToggle;
+    if (toggle && toggle.paused) {
+      toggle.pending = true;
+      connect();
+      return;
     }
+    location.reload();
   });
 
   connect();

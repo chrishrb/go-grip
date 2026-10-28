@@ -31,6 +31,8 @@
     <script src="/static/js/mermaid.min.js"></script>
     <script src="/static/js/mermaid-init.js"></script>
     {{if .Reload}}
+    <link rel="stylesheet" href="/static/css/reload-toggle.css" />
+    <script src="/static/js/reload-toggle.js"></script>
     <script src="/static/js/live-reload.js"></script>
     {{end}}
     {{if .IsListing}}
@@ -47,6 +49,11 @@
     <button id="theme-toggle" class="theme-toggle" title="Toggle theme">
       <span class="theme-toggle-icon"></span>
     </button>
+    {{if .Reload}}
+    <button id="reload-toggle" class="theme-toggle" title="Pause auto-reload">
+      <span class="theme-toggle-icon"></span>
+    </button>
+    {{end}}
     <div class="container">
       <div {{if .BoundingBox }} class="container-inner" {{end}}>
         {{if .BackHref}}
