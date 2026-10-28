@@ -129,6 +129,8 @@ go-grip then serves that folder as the root and opens its folder page. A file ar
 
 Dark mode is not a launch option: use the toggle in the top right corner of the page. Your choice is stored in the browser's local storage, so each browser remembers its own theme. Without a stored choice the page follows the operating system's `prefers-color-scheme` setting.
 
+Below it, the width toggle (↔) opens a panel to set the content width to 70%, 80% or 90% of the window, to a custom two-digit percentage typed into the field below the options, or back to Auto (GitHub's 896px). Like the theme, the choice is stored in the browser's local storage. The toggle is hidden on windows narrower than 940px, where the content already spans the full width.
+
 By default each open page reloads when something it shows changes: a Markdown page when its file or a local image it references is saved, a folder page when an entry in that folder is added, removed, renamed or written. Saving an unrelated file does not reload the page, and editor temp and swap files are ignored.
 
 To disable automatic browser reload on file changes (useful for stable editing):
