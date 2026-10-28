@@ -4,16 +4,17 @@ import (
 	"bytes"
 	"context"
 	"errors"
-	"fmt"
 	"html"
 	htmltemplate "html/template"
 	"io"
 	"io/fs"
 	"log/slog"
+	"net"
 	"net/http"
 	"net/url"
 	"path"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"text/template"
 	"time"
@@ -83,9 +84,20 @@ func (s *Server) Serve(file string) error {
 
 	handler := s.newHandler(http.Dir(directory))
 
-	addr := fmt.Sprintf("http://%s:%d%s", s.host, s.port, startPath)
+	// Bind before printing or opening the browser
+	// in order for a bad host or a busy port to fail fast
+	ln, err := net.Listen("tcp", net.JoinHostPort(s.host, strconv.Itoa(s.port)))
+	if err != nil {
+		return err
+	}
+	port := strconv.Itoa(ln.Addr().(*net.TCPAddr).Port)
+
+	addr := "http://" + net.JoinHostPort(browseHost(s.host), port) + startPath
 
 	s.log.Info("🚀 Starting server: " + addr)
+	if isUnspecifiedHost(s.host) {
+		s.log.Info("🌐 Listening on all network interfaces")
+	}
 	s.log.Debug("serving directory", "dir", directory)
 
 	if s.browser {
@@ -100,7 +112,26 @@ func (s *Server) Serve(file string) error {
 	} else {
 		s.log.Info("🔄 Auto-reload disabled. Use F5 to manually refresh.")
 	}
-	return http.ListenAndServe(fmt.Sprintf(":%d", s.port), handler)
+	return http.Serve(ln, handler)
+}
+
+// isUnspecifiedHost reports whether host is a wildcard listen address
+// ("", 0.0.0.0 or ::), which binds every network interface.
+func isUnspecifiedHost(host string) bool {
+	if host == "" {
+		return true
+	}
+	ip := net.ParseIP(host)
+	return ip != nil && ip.IsUnspecified()
+}
+
+// browseHost returns the host to use in the browser URL. A wildcard listen
+// address is not a usable destination, so it is replaced by localhost.
+func browseHost(host string) string {
+	if isUnspecifiedHost(host) {
+		return "localhost"
+	}
+	return host
 }
 
 // debugging reports whether debug logging is on.

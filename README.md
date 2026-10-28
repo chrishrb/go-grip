@@ -105,6 +105,12 @@ You can also specify a port:
 go-grip -p 80 README.md
 ```
 
+By default the server only listens on `localhost`, so it is not reachable from other machines. To listen on a specific interface pass its IP address with `-H`, or use `0.0.0.0` to listen on all interfaces:
+
+```bash
+go-grip -H 0.0.0.0 README.md
+```
+
 or just open the folder page for the current directory:
 
 ```bash
