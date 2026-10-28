@@ -30,6 +30,17 @@
     <script src="/static/js/tex-mml-chtml.js"></script>
     <script src="/static/js/mermaid.min.js"></script>
     <script src="/static/js/mermaid-init.js"></script>
+    {{if .Reload}}
+    <script src="/static/js/live-reload.js"></script>
+    {{end}}
+    {{if .IsListing}}
+    <link rel="stylesheet" href="/static/css/dir-listing.css" />
+    <script src="/static/js/dir-listing.js"></script>
+    {{end}}
+    {{if .BackHref}}
+    <link rel="stylesheet" href="/static/css/back-to-folder.css" />
+    <script src="/static/js/back-to-folder.js"></script>
+    {{end}}
   </head>
 
   <body class="markdown-body">
@@ -38,11 +49,16 @@
     </button>
     <div class="container">
       <div {{if .BoundingBox }} class="container-inner" {{end}}>
+        {{if .BackHref}}
+        <nav class="grip-back" aria-label="Folder">
+          <a id="grip-back" href="{{ .BackHref }}" title="Back to folder (Esc)" aria-label="Back to folder {{ .BackLabel }}"><svg class="octicon octicon-arrow-left" aria-hidden="true" viewBox="0 0 16 16" width="16" height="16"><path d="M7.78 12.53a.75.75 0 0 1-1.06 0L2.47 8.28a.75.75 0 0 1 0-1.06l4.25-4.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042L4.81 7h7.44a.75.75 0 0 1 0 1.5H4.81l2.97 2.97a.75.75 0 0 1 0 1.06Z"></path></svg><span>{{ .BackLabel }}</span></a>
+        </nav>
+        {{end}}
         {{ .Content }}
       </div>
     </div>
     {{if .BoundingBox}}
-    <footer class="container footer">Made with &hearts; by chrishrb</footer>
+    <footer class="container footer">Made with &hearts; by chrishrb and friends</footer>
     {{end}}
   </body>
 </html>

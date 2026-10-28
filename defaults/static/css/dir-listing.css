@@ -1,0 +1,102 @@
+/* Folder page: GitHub-style file list. Colors come from the variables that
+   github-markdown-{light,dark}.css define on .markdown-body, so the theme
+   toggle restyles the table without extra rules. */
+
+.grip-listing-path {
+  margin-bottom: 16px;
+  font-size: 20px;
+  font-weight: 600;
+  word-break: break-all;
+}
+
+.markdown-body table.grip-listing {
+  display: table;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 0 24px;
+  overflow: hidden;
+  border: 1px solid var(--borderColor-default);
+  border-radius: 6px;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.markdown-body table.grip-listing tr,
+.markdown-body table.grip-listing tr:nth-child(2n) {
+  background-color: transparent;
+  border-top: 0;
+}
+
+.markdown-body table.grip-listing td {
+  padding: 8px 16px;
+  border: 0;
+  border-top: 1px solid var(--borderColor-default);
+  font-size: 14px;
+  line-height: 20px;
+  vertical-align: middle;
+}
+
+.markdown-body table.grip-listing tr:first-child td {
+  border-top: 0;
+}
+
+.grip-listing-name {
+  width: 100%;
+  word-break: break-all;
+}
+
+.grip-listing-name .octicon {
+  margin-right: 8px;
+  vertical-align: text-bottom;
+  color: var(--fgColor-muted);
+}
+
+.grip-listing-name a {
+  color: inherit;
+}
+
+.grip-listing-name a:hover {
+  text-decoration: underline;
+}
+
+.grip-listing-name a:focus {
+  outline: none;
+}
+
+.grip-listing-up .grip-listing-name a {
+  padding-left: 24px;
+}
+
+.grip-listing-size,
+.grip-listing-mtime {
+  color: var(--fgColor-muted);
+  white-space: nowrap;
+}
+
+.grip-listing-size {
+  text-align: right;
+}
+
+.grip-listing-mtime {
+  text-align: right;
+}
+
+.markdown-body table.grip-listing tr.grip-listing-row:hover,
+.markdown-body table.grip-listing tr.grip-listing-row:focus-within {
+  background-color: var(--bgColor-muted);
+}
+
+.markdown-body table.grip-listing tr.grip-listing-row:focus-within .grip-listing-name a {
+  text-decoration: underline;
+}
+
+.grip-listing-readme {
+  padding: 16px 0 0;
+  border-top: 1px solid var(--borderColor-default);
+}
+
+@media (max-width: 543.98px) {
+  .grip-listing-size {
+    display: none;
+  }
+}

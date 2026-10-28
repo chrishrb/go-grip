@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"reflect"
 	"strings"
 	"testing"
 )
@@ -89,5 +90,33 @@ func TestMdToHTML_DuplicateHeadingIDs(t *testing.T) {
 	s := string(out)
 	if !strings.Contains(s, `id="notes"`) || !strings.Contains(s, `id="notes-1"`) {
 		t.Errorf("expected deduplicated heading ids, got:\n%s", s)
+	}
+}
+
+func TestLocalRefs(t *testing.T) {
+	tests := []struct {
+		name  string
+		input string
+		want  []string
+	}{
+		{"relative", "![a](img/x.png)\n", []string{"img/x.png"}},
+		{"root relative", "![a](/abs.png)\n", []string{"/abs.png"}},
+		{"escaped with query", "![a](img/my%20pic.png?v=2#f)\n", []string{"img/my pic.png"}},
+		{"external skipped", "![a](https://x/y.png)\n", []string{}},
+		{"protocol relative skipped", "![a](//cdn/y.png)\n", []string{}},
+		{"data skipped", "![a](data:image/png;base64,AA)\n", []string{}},
+		{"deduplicated", "![a](b.png) ![c](a.png)\n\n![d](b.png)\n", []string{"b.png", "a.png"}},
+		{"raw html ignored", "<img src=\"z.png\">\n", []string{}},
+		{"reference style", "![a][r]\n\n[r]: p.png\n", []string{"p.png"}},
+		{"frontmatter skipped", "---\ntitle: x\n---\n\n![a](f.png)\n", []string{"f.png"}},
+	}
+	p := NewParser()
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := p.LocalRefs([]byte(tt.input))
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Fatalf("LocalRefs(%q) = %q, want %q", tt.input, got, tt.want)
+			}
+		})
 	}
 }

@@ -25,6 +25,13 @@
   text-align: center;
 }
 
+/* Primer color variables used by dir-listing.css */
+.markdown-body {
+  --borderColor-default: #d1d9e0;
+  --bgColor-muted: #f6f8fa;
+  --fgColor-muted: #59636e;
+}
+
 /* light */
 .markdown-body {
   color-scheme: light;

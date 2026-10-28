@@ -105,20 +105,36 @@ You can also specify a port:
 go-grip -p 80 README.md
 ```
 
-or just open a file-tree with all available files in the current directory:
+or just open the folder page for the current directory:
 
 ```bash
 go-grip
 ```
 
-If a `README.md` exists in that directory it is opened directly, otherwise the file-tree is shown. You can also browse the tree at any time on http://localhost:6419.
+The folder page shows a table of the folder's entries (folders first, with size and modification time) and, if the folder has a `README.md`, renders it below the table, like GitHub does. Every folder you open in the browser gets the same page. Use the arrow keys (or `j`/`k`) to move between rows, Enter to open a file or folder, and Backspace or ← to go up to the parent folder.
+
+To serve another folder, pass it as the argument (with or without a trailing slash):
+
+```bash
+go-grip docs/
+```
+
+go-grip then serves that folder as the root and opens its folder page. A file argument serves the file's folder and opens the file. If the given path does not exist, go-grip prints an error and exits with status 1 instead of starting the server.
 
 Dark mode is not a launch option: use the toggle in the top right corner of the page. Your choice is stored in the browser's local storage, so each browser remembers its own theme. Without a stored choice the page follows the operating system's `prefers-color-scheme` setting.
+
+By default each open page reloads when something it shows changes: a Markdown page when its file or a local image it references is saved, a folder page when an entry in that folder is added, removed, renamed or written. Saving an unrelated file does not reload the page, and editor temp and swap files are ignored.
 
 To disable automatic browser reload on file changes (useful for stable editing):
 
 ```bash
 go-grip --no-reload README.md
+```
+
+go-grip logs to stderr. `--log-level` sets how much it prints: `error`, `warn`, `info` (the default) or `debug`. At `info` you only see the startup lines, warnings and errors; `error` hides the startup lines too. `debug` adds a timestamped line for every request (method, path, status, duration), every file system event and whether it was ignored, each debounced reload and how many events it coalesced, and each live reload connection. Attach that output when reporting a reload problem:
+
+```bash
+go-grip --log-level=debug README.md
 ```
 
 The browser page title is derived from the Markdown filename (`my-guide_v2.md` becomes `My Guide V2`).
