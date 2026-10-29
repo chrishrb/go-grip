@@ -163,6 +163,24 @@ go-grip --version
 
 To terminate the current server simply press `CTRL-C`.
 
+### Use with AI tools (MCP)
+
+`go-grip mcp` runs go-grip as a [Model Context Protocol](https://modelcontextprotocol.io) server over stdin/stdout. It exposes one tool, `preview_markdown`, which opens a Markdown file or folder in your browser. That lets AI tools such as Claude Code, Claude Desktop or Cursor show you the plans and docs they write. Each previewed folder is served on a free localhost port, and the page live-reloads while the agent keeps editing the file.
+
+Register it with Claude Code:
+
+```bash
+claude mcp add --scope user go-grip -- go-grip mcp
+```
+
+or add it to the MCP config of Claude Desktop, Cursor and others:
+
+```json
+{ "mcpServers": { "go-grip": { "command": "go-grip", "args": ["mcp"] } } }
+```
+
+Then ask for a preview, e.g. *"preview the plan with go-grip"*. The `mcp` subcommand accepts `-b=false`, `--bounding-box`, `--no-reload` and `--log-level` like the main command. To preview a file that is literally named `mcp`, run `go-grip ./mcp`.
+
 ## :pencil: Examples
 
 <img src="./.github/docs/example-1.png" alt="examples" width="1000"/>
