@@ -412,6 +412,7 @@ func (s *Server) serveMarkdown(w http.ResponseWriter, r *http.Request, root *Roo
 		CssCodeDark:  getCssCode("github-dark"),
 		Title:        html.EscapeString(s.pageTitle(r.URL.Path)),
 		Reload:       s.reloading(),
+		Features:     s.parser.TemplateFeatures(),
 		BackHref:     html.EscapeString(backHref(r.URL.Path)),
 		BackLabel:    html.EscapeString(backLabel(r.URL.Path)),
 	})
@@ -483,6 +484,7 @@ func (s *Server) serveFolder(w http.ResponseWriter, r *http.Request, root *Root)
 		Title:        html.EscapeString(title),
 		IsListing:    true,
 		Reload:       s.reloading(),
+		Features:     s.parser.TemplateFeatures(),
 	})
 	if err != nil {
 		s.serverError(w, r, err)
@@ -510,6 +512,9 @@ type htmlStruct struct {
 	// folder. Both are HTML-escaped; they are empty on folder pages.
 	BackHref  string
 	BackLabel string
+	// Features reports which optional Markdown features are enabled, so the
+	// template only loads their assets when needed.
+	Features map[string]bool
 }
 
 func (s *Server) pageTitle(filename string) string {

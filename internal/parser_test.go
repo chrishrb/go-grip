@@ -7,7 +7,7 @@ import (
 )
 
 func TestMdToHTML_FrontmatterRenderedAsTable(t *testing.T) {
-	p := NewParser()
+	p := NewParser(nil)
 	input := []byte("---\ntitle: Hello World\nauthor: Alice\n---\n\n# Body Heading\n")
 	out, err := p.MdToHTML(input)
 	if err != nil {
@@ -35,7 +35,7 @@ func TestMdToHTML_FrontmatterRenderedAsTable(t *testing.T) {
 }
 
 func TestMdToHTML_NoFrontmatter_Unchanged(t *testing.T) {
-	p := NewParser()
+	p := NewParser(nil)
 	plain := []byte("# Just a heading\n\nSome paragraph.\n")
 	out, err := p.MdToHTML(plain)
 	if err != nil {
@@ -51,7 +51,7 @@ func TestMdToHTML_NoFrontmatter_Unchanged(t *testing.T) {
 }
 
 func TestMdToHTML_FrontmatterBodyNotInTable(t *testing.T) {
-	p := NewParser()
+	p := NewParser(nil)
 	input := []byte("---\ntitle: Test\n---\n\nBody paragraph here.\n")
 	out, err := p.MdToHTML(input)
 	if err != nil {
@@ -68,7 +68,7 @@ func TestMdToHTML_FrontmatterBodyNotInTable(t *testing.T) {
 }
 
 func TestMdToHTML_HeadingIDsMatchGitHub(t *testing.T) {
-	p := NewParser()
+	p := NewParser(nil)
 	input := []byte("### Implementation `ATTACK_PATTERN`\n\n[link](#implementation-attack_pattern)\n")
 	out, err := p.MdToHTML(input)
 	if err != nil {
@@ -81,7 +81,7 @@ func TestMdToHTML_HeadingIDsMatchGitHub(t *testing.T) {
 }
 
 func TestMdToHTML_DuplicateHeadingIDs(t *testing.T) {
-	p := NewParser()
+	p := NewParser(nil)
 	input := []byte("# Notes\n\n# Notes\n")
 	out, err := p.MdToHTML(input)
 	if err != nil {
@@ -110,7 +110,7 @@ func TestLocalRefs(t *testing.T) {
 		{"reference style", "![a][r]\n\n[r]: p.png\n", []string{"p.png"}},
 		{"frontmatter skipped", "---\ntitle: x\n---\n\n![a](f.png)\n", []string{"f.png"}},
 	}
-	p := NewParser()
+	p := NewParser(nil)
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := p.LocalRefs([]byte(tt.input))
@@ -118,5 +118,104 @@ func TestLocalRefs(t *testing.T) {
 				t.Fatalf("LocalRefs(%q) = %q, want %q", tt.input, got, tt.want)
 			}
 		})
+	}
+}
+
+func TestParserFeatureDisablePassThrough(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name            string
+		disabledFeature string
+		input           string
+		wantContains    []string
+		wantNotContains []string
+	}{
+		{
+			name:            "mathjax",
+			disabledFeature: FeatureMathJax,
+			input:           "Inline math: $x + y$\n",
+			wantContains:    []string{"$x + y$"},
+			wantNotContains: []string{`\(`, `\)`},
+		},
+		{
+			name:            "mermaid",
+			disabledFeature: FeatureMermaid,
+			input:           "```mermaid\ngraph TD;\n  A-->B;\n```\n",
+			wantContains:    []string{`class="highlight`, `graph TD;`, `A--&gt;B;`},
+			wantNotContains: []string{`<pre class="mermaid">`},
+		},
+		{
+			name:            "details",
+			disabledFeature: FeatureDetails,
+			input:           "<details><summary>Open me</summary>Inside details</details>\n",
+			wantContains:    []string{`<details><summary>Open me</summary>Inside details</details>`},
+			wantNotContains: []string{`id="details-`, `sessionStorage`},
+		},
+		{
+			name:            "footnote",
+			disabledFeature: FeatureFootnote,
+			input:           "Footnote ref[^1].\n\n[^1]: Footnote text.\n",
+			wantContains:    []string{`Footnote ref[^1].`, `[^1]: Footnote text.`},
+			wantNotContains: []string{`class="footnote-ref"`, `class="footnotes"`},
+		},
+		{
+			name:            "ghissue",
+			disabledFeature: FeatureGHIssue,
+			input:           "Issue refs: #46 and grafana/grafana#22\n",
+			wantContains:    []string{`Issue refs: #46 and grafana/grafana#22`},
+			wantNotContains: []string{`class="issue-link"`},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			parser := NewParser([]string{tt.disabledFeature})
+			html, err := parser.MdToHTML([]byte(tt.input))
+			if err != nil {
+				t.Fatalf("MdToHTML returned error: %v", err)
+			}
+
+			got := string(html)
+			for _, want := range tt.wantContains {
+				if !strings.Contains(got, want) {
+					t.Fatalf("expected output to contain %q, got %q", want, got)
+				}
+			}
+			for _, unwanted := range tt.wantNotContains {
+				if strings.Contains(got, unwanted) {
+					t.Fatalf("expected output not to contain %q, got %q", unwanted, got)
+				}
+			}
+		})
+	}
+}
+
+func TestParserMathEnabledTransformsInlineMath(t *testing.T) {
+	t.Parallel()
+
+	parser := NewParser(nil)
+	html, err := parser.MdToHTML([]byte("Inline math: $x + y$\n"))
+	if err != nil {
+		t.Fatalf("MdToHTML returned error: %v", err)
+	}
+
+	got := string(html)
+	if !strings.Contains(got, `\(`) || !strings.Contains(got, `\)`) {
+		t.Fatalf("expected mathjax delimiters in output, got %q", got)
+	}
+	if strings.Contains(got, "$x + y$") {
+		t.Fatalf("expected inline math to be transformed, got %q", got)
+	}
+}
+
+func TestValidateMarkdownFeaturesRejectsUnknownValues(t *testing.T) {
+	t.Parallel()
+
+	err := ValidateMarkdownFeatures([]string{"mathjax", "bogus"})
+	if err == nil {
+		t.Fatal("expected validation error for unknown feature")
 	}
 }

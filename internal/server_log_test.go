@@ -19,7 +19,7 @@ func TestRequestLogQuietAtInfo(t *testing.T) {
 	t.Parallel()
 	dir := writeTree(t, map[string]string{"a.md": "# A\n"})
 	buf := &syncBuffer{}
-	server := NewServer("localhost", 6419, false, false, false, NewParser(), NewLogger(buf, slog.LevelInfo))
+	server := NewServer("localhost", 6419, false, false, false, NewParser(nil), NewLogger(buf, slog.LevelInfo))
 	handler := server.newHandler(http.Dir(dir))
 
 	for _, p := range []string{"/a.md", "/", "/static/js/live-reload.js", "/missing.txt"} {
@@ -34,7 +34,7 @@ func TestRequestLogAtDebug(t *testing.T) {
 	t.Parallel()
 	dir := writeTree(t, map[string]string{"a.md": "# A\n"})
 	buf := &syncBuffer{}
-	server := NewServer("localhost", 6419, false, false, false, NewParser(), NewLogger(buf, slog.LevelDebug))
+	server := NewServer("localhost", 6419, false, false, false, NewParser(nil), NewLogger(buf, slog.LevelDebug))
 	handler := server.newHandler(http.Dir(dir))
 
 	tests := []struct {
@@ -90,7 +90,7 @@ func TestEventsStreamWithDebugLogging(t *testing.T) {
 	dir := writeTree(t, map[string]string{"docs/a.md": "# A\n"})
 	hub, src, hubLog := loggedHub(t, testDebounce, slog.LevelDebug)
 	buf := &syncBuffer{}
-	server := NewServer("localhost", 6419, false, false, true, NewParser(), NewLogger(buf, slog.LevelDebug))
+	server := NewServer("localhost", 6419, false, false, true, NewParser(nil), NewLogger(buf, slog.LevelDebug))
 	server.hub = hub
 	ts := httptest.NewServer(server.newHandler(http.Dir(dir)))
 	defer ts.Close()
@@ -137,7 +137,7 @@ func TestEventsRejectionLogsWarning(t *testing.T) {
 	dir := writeTree(t, map[string]string{"a.md": "# A\n"})
 	hub, _, _ := loggedHub(t, testDebounce, slog.LevelInfo)
 	buf := &syncBuffer{}
-	server := NewServer("localhost", 6419, false, false, true, NewParser(), NewLogger(buf, slog.LevelWarn))
+	server := NewServer("localhost", 6419, false, false, true, NewParser(nil), NewLogger(buf, slog.LevelWarn))
 	server.hub = hub
 	handler := server.newHandler(http.Dir(dir))
 
