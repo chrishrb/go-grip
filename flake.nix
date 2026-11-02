@@ -33,7 +33,7 @@
         ];
         # Only for updating vendorHas
         # vendorHash = "sha256-RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR=";
-        vendorHash = "sha256-QsLiCsFY6nI85jsEZtAgmObEKpBSZWhzZk+TlukM8JU=";
+        vendorHash = "sha256-Bc1hWmz5Auh55CzwF83k4Q4eVdik/SPWKT7aRgUh+b4=";
       };
     });
     devShells = forAllSystems (pkgs: {

@@ -1,0 +1,17 @@
+name: Nix
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - uses: cachix/install-nix-action@v31
+
+      # Fails when vendorHash in flake.nix is out of date with go.mod/go.sum
+      - name: Build flake package
+        run: nix build .#default -L
