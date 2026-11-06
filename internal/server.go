@@ -66,12 +66,24 @@ func NewServer(host string, port int, boundingBox bool, browser bool, enableRelo
 }
 
 func (s *Server) Serve(file string) error {
-	directory, startPath, err := ResolveTarget(file)
+	_, wait, err := s.Start(file)
 	if err != nil {
 		return err
 	}
+	return wait()
+}
 
-	if s.enableReload {
+// Start binds the listener for file and serves it in the background. It
+// returns the URL the browser opens first and a wait function that blocks
+// until serving stops. One Server can Start several targets; they share the
+// live reload hub.
+func (s *Server) Start(file string) (addr string, wait func() error, err error) {
+	directory, startPath, err := ResolveTarget(file)
+	if err != nil {
+		return "", nil, err
+	}
+
+	if s.enableReload && s.hub == nil {
 		src, err := newFsnotifySource()
 		if err != nil {
 			s.log.Warn("❌ Error starting file watcher, auto-reload disabled", "err", err)
@@ -88,11 +100,11 @@ func (s *Server) Serve(file string) error {
 	// in order for a bad host or a busy port to fail fast
 	ln, err := net.Listen("tcp", net.JoinHostPort(s.host, strconv.Itoa(s.port)))
 	if err != nil {
-		return err
+		return "", nil, err
 	}
 	port := strconv.Itoa(ln.Addr().(*net.TCPAddr).Port)
 
-	addr := "http://" + net.JoinHostPort(browseHost(s.host), port) + startPath
+	addr = "http://" + net.JoinHostPort(browseHost(s.host), port) + startPath
 
 	s.log.Info("🚀 Starting server: " + addr)
 	if isUnspecifiedHost(s.host) {
@@ -112,7 +124,10 @@ func (s *Server) Serve(file string) error {
 	} else {
 		s.log.Info("🔄 Auto-reload disabled. Use F5 to manually refresh.")
 	}
-	return http.Serve(ln, handler)
+
+	done := make(chan error, 1)
+	go func() { done <- http.Serve(ln, handler) }()
+	return addr, func() error { return <-done }, nil
 }
 
 // isUnspecifiedHost reports whether host is a wildcard listen address
