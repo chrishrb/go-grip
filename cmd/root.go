@@ -29,6 +29,7 @@ var rootCmd = &cobra.Command{
 		port, _ := cmd.Flags().GetInt("port")
 		boundingBox, _ := cmd.Flags().GetBool("bounding-box")
 		disabledFeatures, _ := cmd.Flags().GetStringSlice("disable-markdown-feature")
+		iconPacks, _ := cmd.Flags().GetStringSlice("mermaid-icon-pack")
 		noReload, _ := cmd.Flags().GetBool("no-reload")
 		logger, err := newLogger(cmd, os.Stderr)
 		if err != nil {
@@ -46,6 +47,9 @@ var rootCmd = &cobra.Command{
 
 		parser := internal.NewParser(disabledFeatures)
 		server := internal.NewServer(host, port, boundingBox, browser, !noReload, parser, logger)
+		if err := server.SetMermaidIconPacks(iconPacks); err != nil {
+			return fmt.Errorf("--mermaid-icon-pack: %w", err)
+		}
 		return server.Serve(file)
 	},
 }
@@ -86,6 +90,11 @@ func init() {
 		"disable-markdown-feature",
 		nil,
 		"Disable optional markdown feature(s): "+strings.Join(internal.SupportedMarkdownFeatures(), ", "),
+	)
+	rootCmd.Flags().StringSlice(
+		"mermaid-icon-pack",
+		nil,
+		"Load iconify icon pack(s) for Mermaid diagrams from unpkg.com, e.g. logos",
 	)
 	rootCmd.Flags().Bool("no-reload", false, "Disable automatic browser reload on file changes")
 	rootCmd.Flags().String("log-level", "info", "Log level on stderr: error, warn, info or debug")

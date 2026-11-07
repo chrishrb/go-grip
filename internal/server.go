@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"fmt"
 	"html"
 	htmltemplate "html/template"
 	"io"
@@ -14,6 +15,7 @@ import (
 	"net/url"
 	"path"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 	"text/template"
@@ -37,6 +39,7 @@ type Server struct {
 	enableReload bool
 	hub          *Hub
 	log          *slog.Logger
+	iconPacks    string
 }
 
 // reloadDebounce collapses the several events an editor writes per save into
@@ -63,6 +66,24 @@ func NewServer(host string, port int, boundingBox bool, browser bool, enableRelo
 		parser:       parser,
 		log:          orDiscard(logger),
 	}
+}
+
+var iconifyPrefix = regexp.MustCompile(`^[a-z0-9]+(-[a-z0-9]+)*$`)
+
+// SetMermaidIconPacks makes Mermaid load the named iconify icon packs from
+// unpkg.com when a diagram uses one of their icons. Call it before Serve.
+func (s *Server) SetMermaidIconPacks(names []string) error {
+	normalized := make([]string, len(names))
+	for i, raw := range names {
+		name := strings.ToLower(strings.TrimSpace(raw))
+		// Names go unescaped into layout.html (a text/template) and the unpkg URL.
+		if !iconifyPrefix.MatchString(name) {
+			return fmt.Errorf("invalid icon pack name %q: want an iconify prefix such as logos", raw)
+		}
+		normalized[i] = name
+	}
+	s.iconPacks = strings.Join(normalized, ",")
+	return nil
 }
 
 func (s *Server) Serve(file string) error {
@@ -413,6 +434,7 @@ func (s *Server) serveMarkdown(w http.ResponseWriter, r *http.Request, root *Roo
 		Title:        html.EscapeString(s.pageTitle(r.URL.Path)),
 		Reload:       s.reloading(),
 		Features:     s.parser.TemplateFeatures(),
+		IconPacks:    s.iconPacks,
 		BackHref:     html.EscapeString(backHref(r.URL.Path)),
 		BackLabel:    html.EscapeString(backLabel(r.URL.Path)),
 	})
@@ -485,6 +507,7 @@ func (s *Server) serveFolder(w http.ResponseWriter, r *http.Request, root *Root)
 		IsListing:    true,
 		Reload:       s.reloading(),
 		Features:     s.parser.TemplateFeatures(),
+		IconPacks:    s.iconPacks,
 	})
 	if err != nil {
 		s.serverError(w, r, err)
@@ -515,6 +538,8 @@ type htmlStruct struct {
 	// Features reports which optional Markdown features are enabled, so the
 	// template only loads their assets when needed.
 	Features map[string]bool
+	// IconPacks is split on "," by mermaid-init.js.
+	IconPacks string
 }
 
 func (s *Server) pageTitle(filename string) string {

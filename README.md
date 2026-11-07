@@ -147,6 +147,15 @@ go-grip --disable-markdown-feature mathjax README.md
 go-grip --disable-markdown-feature mathjax --disable-markdown-feature mermaid README.md
 ```
 
+Mermaid diagrams can use [iconify](https://icon-sets.iconify.design/) icons such as `logos:docker-icon` once you name their icon packs (the part before the colon) with `--mermaid-icon-pack`.
+The browser then loads a pack from unpkg.com the first time a diagram on the page uses one of its icons, so this option needs network access.
+Without it, go-grip does not load any icon pack.
+
+```bash
+go-grip --mermaid-icon-pack logos README.md
+go-grip --mermaid-icon-pack logos,simple-icons README.md
+```
+
 go-grip logs to stderr. `--log-level` sets how much it prints: `error`, `warn`, `info` (the default) or `debug`. At `info` you only see the startup lines, warnings and errors; `error` hides the startup lines too. `debug` adds a timestamped line for every request (method, path, status, duration), every file system event and whether it was ignored, each debounced reload and how many events it coalesced, and each live reload connection. Attach that output when reporting a reload problem:
 
 ```bash
