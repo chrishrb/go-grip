@@ -38,7 +38,7 @@
     {{end}}
     {{if index .Features "mermaid"}}
     <script src="/static/js/mermaid.min.js"></script>
-    <script src="/static/js/mermaid-init.js"></script>
+    <script src="/static/js/mermaid-init.js"{{if .IconPacks}} data-icon-packs="{{.IconPacks}}"{{end}}></script>
     {{end}}
     {{if .Reload}}
     <script src="/static/js/live-reload.js"></script>

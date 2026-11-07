@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"io"
 	"log/slog"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -76,6 +77,31 @@ func TestRootRejectsUnknownLogLevel(t *testing.T) {
 	}
 	msg := err.Error()
 	for _, want := range []string{"--log-level", `"loud"`, "error, warn, info, debug"} {
+		if !strings.Contains(msg, want) {
+			t.Errorf("error %q should mention %s", msg, want)
+		}
+	}
+}
+
+func TestRootRejectsInvalidMermaidIconPack(t *testing.T) {
+	// A missing file makes Serve fail before it watches or listens, should the name ever pass validation.
+	missing := filepath.Join(t.TempDir(), "missing.md")
+	rootCmd.SetArgs([]string{"--mermaid-icon-pack=logos!", missing})
+	rootCmd.SetOut(io.Discard)
+	rootCmd.SetErr(io.Discard)
+	t.Cleanup(func() {
+		rootCmd.SetArgs(nil)
+		// Set would append to the slice, and importing pflag.SliceValue would make pflag a direct dependency.
+		slice := rootCmd.Flags().Lookup("mermaid-icon-pack").Value.(interface{ Replace([]string) error })
+		_ = slice.Replace(nil)
+	})
+
+	err := rootCmd.Execute()
+	if err == nil {
+		t.Fatal("expected an error for an invalid icon pack name")
+	}
+	msg := err.Error()
+	for _, want := range []string{"--mermaid-icon-pack", `"logos!"`} {
 		if !strings.Contains(msg, want) {
 			t.Errorf("error %q should mention %s", msg, want)
 		}

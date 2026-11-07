@@ -108,6 +108,29 @@
     node.appendChild(viewport);
   }
 
+  function registerIconPacks() {
+    var script = document.currentScript;
+    var packs = script && script.dataset.iconPacks;
+    if (!window.mermaid || !packs) return;
+
+    mermaid.registerIconPacks(packs.split(',').map(function(name) {
+      // unpkg and @1 as in the Mermaid docs; @1 picks up new icons without a go-grip release.
+      var url = 'https://unpkg.com/@iconify-json/' + name + '@1/icons.json';
+      var packPromise;
+      return {
+        name: name,
+        // Mermaid caches a pack only once it has loaded, but draws flowchart nodes in parallel, so share one fetch.
+        // A failure stays cached too: retrying would wait out a timeout per icon; reloading the page retries.
+        loader: function() {
+          if (!packPromise) {
+            packPromise = fetch(url).then(function(res) { return res.json(); });
+          }
+          return packPromise;
+        }
+      };
+    }));
+  }
+
   async function renderAll() {
     if (!window.mermaid) return;
 
@@ -151,4 +174,8 @@
     }
     document.body.addEventListener('themechange', renderAll);
   });
+
+  // Not in the DOMContentLoaded handler: document.currentScript is only set while this file runs.
+  // After addEventListener so that a failure here cannot keep the diagrams from rendering.
+  registerIconPacks();
 })();

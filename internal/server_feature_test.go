@@ -65,3 +65,61 @@ func TestMarkdownResponseOmitsDisabledFeatureAssets(t *testing.T) {
 		})
 	}
 }
+
+func TestResponsesNameMermaidIconPacks(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name      string
+		iconPacks []string
+		want      string
+	}{
+		{
+			name: "none",
+			want: `<script src="/static/js/mermaid-init.js"></script>`,
+		},
+		{
+			name:      "two packs",
+			iconPacks: []string{"logos", "fa6-brands"},
+			want:      `<script src="/static/js/mermaid-init.js" data-icon-packs="logos,fa6-brands"></script>`,
+		},
+		{
+			name:      "spaces and capitals",
+			iconPacks: []string{" Logos "},
+			want:      `<script src="/static/js/mermaid-init.js" data-icon-packs="logos"></script>`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			server := NewServer("localhost", 6419, false, false, false, NewParser(nil), nil)
+			if err := server.SetMermaidIconPacks(tt.iconPacks); err != nil {
+				t.Fatalf("SetMermaidIconPacks(%q): %v", tt.iconPacks, err)
+			}
+			handler := server.newHandler(http.Dir(writeTree(t, map[string]string{"README.md": "# Title\n"})))
+
+			for _, path := range []string{"/README.md", "/"} {
+				req := httptest.NewRequest(http.MethodGet, path, nil)
+				recorder := httptest.NewRecorder()
+				handler.ServeHTTP(recorder, req)
+
+				if body := recorder.Body.String(); !strings.Contains(body, tt.want) {
+					t.Errorf("GET %s: expected body to contain %q, got %q", path, tt.want, body)
+				}
+			}
+		})
+	}
+}
+
+func TestSetMermaidIconPacksRejectsNonPrefixNames(t *testing.T) {
+	t.Parallel()
+
+	server := NewServer("localhost", 6419, false, false, false, NewParser(nil), nil)
+	for _, name := range []string{"", "-logos", "logos-", "simple--icons", "logos,mdi", `logos" onload="alert(1)`} {
+		if err := server.SetMermaidIconPacks([]string{name}); err == nil {
+			t.Errorf("SetMermaidIconPacks(%q) = nil, want an error", name)
+		}
+	}
+}
