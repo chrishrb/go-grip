@@ -1,6 +1,12 @@
 (function () {
   var STORAGE_KEY = "go-grip-theme";
   var MODES = ["light", "dark"];
+  var CSS_SPACE = "(?:\\s|/\\*(?:[^*]|\\*(?!/))*\\*/)*";
+  var SCHEME_CONDITION = new RegExp(
+    "(\\(" + CSS_SPACE + "prefers-color-scheme" + CSS_SPACE + ":" + CSS_SPACE + ")(light|dark)(" + CSS_SPACE + "\\))",
+    "gi"
+  );
+  var originalMedia = new WeakMap();
 
   function browserPrefers() {
     if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
@@ -15,6 +21,27 @@
       if (stored && MODES.indexOf(stored) !== -1) return stored;
     } catch (e) {}
     return browserPrefers();
+  }
+
+  function swapScheme(match, before, scheme, after) {
+    return before + (scheme.toLowerCase() === "dark" ? "light" : "dark") + after;
+  }
+
+  function syncPictureSources(mode) {
+    var swap = mode !== browserPrefers();
+    var sources = document.querySelectorAll("picture > source[media]");
+
+    for (var i = 0; i < sources.length; i++) {
+      var source = sources[i];
+      if (!originalMedia.has(source)) {
+        if (source.media.search(SCHEME_CONDITION) === -1) continue;
+        originalMedia.set(source, source.media);
+      }
+
+      var original = originalMedia.get(source);
+      var media = swap ? original.replace(SCHEME_CONDITION, swapScheme) : original;
+      if (source.media !== media) source.media = media;
+    }
   }
 
   function applyTheme(mode) {
@@ -37,6 +64,7 @@
       document.body.setAttribute("data-theme", "light");
     }
 
+    syncPictureSources(mode);
     updateIcon(mode);
 
     try {
@@ -74,6 +102,14 @@
     var btn = document.getElementById("theme-toggle");
     if (btn) {
       btn.addEventListener("click", toggle);
+    }
+
+    if (window.matchMedia) {
+      window
+        .matchMedia("(prefers-color-scheme: dark)")
+        .addEventListener("change", function () {
+          syncPictureSources(document.body.getAttribute("data-theme"));
+        });
     }
   });
 })();
