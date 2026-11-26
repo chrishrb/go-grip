@@ -7,6 +7,8 @@ import (
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/renderer/html"
+
+	"github.com/chrishrb/go-grip/pkg/mathjax"
 )
 
 func TestGitHubIssueExtension(t *testing.T) {
@@ -248,5 +250,30 @@ func TestEdgeCases(t *testing.T) {
 				t.Error("Expected some output")
 			}
 		})
+	}
+}
+
+// A reference inside inline math must be left alone; before this was handled,
+// the transformer replaced the math node's raw text child and the math
+// renderer panicked on the resulting *GitHubIssue.
+func TestInlineMathIsNotLinked(t *testing.T) {
+	md := goldmark.New(
+		goldmark.WithExtensions(
+			mathjax.MathJax,
+			New(WithRepository("owner/repo")),
+		),
+	)
+
+	var buf bytes.Buffer
+	if err := md.Convert([]byte("cost $5 for part #7/250 and $6 more, see #12"), &buf); err != nil {
+		t.Fatalf("Failed to convert markdown: %v", err)
+	}
+	out := buf.String()
+
+	if !bytes.Contains(buf.Bytes(), []byte(`<span class="math inline">\(5 for part #7/250 and \)</span>`)) {
+		t.Errorf("Expected math span to be kept verbatim, got:\n%s", out)
+	}
+	if !bytes.Contains(buf.Bytes(), []byte(`<a href="https://github.com/owner/repo/issues/12" class="issue-link">#12</a>`)) {
+		t.Errorf("Expected reference outside math to still be linked, got:\n%s", out)
 	}
 }

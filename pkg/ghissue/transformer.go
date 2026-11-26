@@ -6,6 +6,8 @@ import (
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/text"
+
+	"github.com/chrishrb/go-grip/pkg/mathjax"
 )
 
 var (
@@ -45,8 +47,8 @@ func (t *transformer) Transform(node *ast.Document, reader text.Reader, pc parse
 			return ast.WalkContinue, nil
 		}
 
-		// Don't process inside code or links
-		if parent.Kind() == ast.KindCodeSpan || parent.Kind() == ast.KindLink {
+		// Don't process inside code, links, or inline math
+		if skipParent(parent) {
 			return ast.WalkContinue, nil
 		}
 
@@ -237,4 +239,15 @@ func (t *transformer) createIssueNode(m issueMatch) *GitHubIssue {
 		repo = []byte(t.config.Repository)
 	}
 	return NewGitHubIssue(repo, []byte(m.number))
+}
+
+// skipParent reports whether references must not be linked inside a node of
+// this kind. Inline math children are raw text that its renderer expects to
+// find as *ast.Text, so replacing them would also panic that renderer.
+func skipParent(parent ast.Node) bool {
+	switch parent.Kind() {
+	case ast.KindCodeSpan, ast.KindLink, mathjax.KindInlineMath:
+		return true
+	}
+	return false
 }
