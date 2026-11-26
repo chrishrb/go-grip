@@ -30,8 +30,8 @@ func (s *issueParser) Trigger() []byte {
 func (s *issueParser) Parse(parent ast.Node, block text.Reader, pc parser.Context) ast.Node {
 	line, _ := block.PeekLine()
 
-	// Don't parse inside code blocks or links
-	if parent.Kind() == ast.KindCodeSpan || parent.Kind() == ast.KindLink {
+	// Don't parse inside code blocks, links, or inline math
+	if skipParent(parent) {
 		return nil
 	}
 
